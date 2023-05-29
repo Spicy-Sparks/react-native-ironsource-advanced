@@ -117,27 +117,55 @@ RCT_EXPORT_METHOD(getAdvertiserId:(RCTPromiseResolveBlock)resolve reject:(RCTPro
 #pragma mark - ISInitializationDelegate
 
 - (void)initializationDidComplete {
-    [self sendEventWithName:kIronSourceInitializationSucceed body:nil];
+    [self sendEventWithName:kIronSourceInitializationCompleted body:nil];
 }
 
 #pragma mark - ISImpressionDataDelegate
 
 - (void)impressionDataDidSucceed:(ISImpressionData *)impressionData {
-    [self sendEventWithName:kIronSourceImpressionDataDidSucceed body:@{
-        @"auctionId": impressionData.auction_id,
-        @"adUnit": impressionData.ad_unit,
-        @"country": impressionData.country,
-        @"ab": impressionData.ab,
-        @"segmentName": impressionData.segment_name,
-        @"placement": impressionData.placement,
-        @"adNetwork": impressionData.ad_network,
-        @"instanceName": impressionData.instance_name,
-        @"instanceId": impressionData.instance_id,
-        @"revenue": impressionData.revenue,
-        @"precision": impressionData.precision,
-        @"lifetimeRevenue": impressionData.lifetime_revenue,
-        @"encryptedCPM": impressionData.encrypted_cpm
-    }];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(impressionData == nil){
+        if(impressionData.auction_id != nil) {
+            args[@"auctionId"] = impressionData.auction_id;
+        }
+        if(impressionData.ad_unit != nil) {
+            args[@"adUnit"] = impressionData.ad_unit;
+        }
+        if(impressionData.country != nil) {
+            args[@"country"] = impressionData.country;
+        }
+        if(impressionData.ab != nil) {
+            args[@"ab"] = impressionData.ab;
+        }
+        if(impressionData.segment_name != nil) {
+            args[@"segmentName"] = impressionData.segment_name;
+        }
+        if(impressionData.placement != nil) {
+            args[@"placement"] = impressionData.placement;
+        }
+        if(impressionData.ad_network != nil) {
+            args[@"adNetwork"] = impressionData.ad_network;
+        }
+        if(impressionData.instance_name != nil) {
+            args[@"instanceName"] = impressionData.instance_name;
+        }
+        if(impressionData.ad_unit != nil) {
+            args[@"instanceId"] = impressionData.instance_id;
+        }
+        if(impressionData.revenue != nil) {
+            args[@"revenue"] = impressionData.revenue;
+        }
+        if(impressionData.precision != nil) {
+            args[@"precision"] = impressionData.precision;
+        }
+        if(impressionData.lifetime_revenue != nil) {
+            args[@"lifetimeRevenue"] = impressionData.lifetime_revenue;
+        }
+        if(impressionData.encrypted_cpm != nil) {
+            args[@"encryptedCPM"] = impressionData.encrypted_cpm;
+        }
+    }
+    [self sendEventWithName:kIronSourceImpressionDataDidSucceed body:args];
 }
 
 @end

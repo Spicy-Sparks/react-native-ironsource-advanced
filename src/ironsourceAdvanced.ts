@@ -10,13 +10,13 @@ interface InitOptions {
   validateIntegration?: boolean
 }
 
-const init = (appKey: string, options: InitOptions): Promise<void> => {
+const init = (appKey: string, options: InitOptions = {}): Promise<void> => {
   return IronsourceAdvanced.init(appKey, [], options)
 }
 
 export type AdUnit = 'REWARDED_VIDEO' | 'INTERSTITIAL' | 'OFFERWALL' | 'BANNER'
 
-const initWithAdUnits = (appKey: string, adUnits: Array<AdUnit>, options: InitOptions): Promise<void> => {
+const initWithAdUnits = (appKey: string, adUnits: Array<AdUnit>, options: InitOptions = {}): Promise<void> => {
   return IronsourceAdvanced.init(appKey, adUnits, options)
 }
 
@@ -65,7 +65,7 @@ const removeAllListeners = () => {
   onImpressionSucceed.removeListener()
 }
 
-export const InitializationEvents = {
+export default {
   init,
   initWithAdUnits,
   onInitCompleted,

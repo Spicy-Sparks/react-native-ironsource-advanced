@@ -70,15 +70,28 @@ RCT_EXPORT_METHOD(isRewardedVideoAvailable:(RCTPromiseResolveBlock)resolve rejec
 }
 
 - (void)didReceiveRewardForPlacement:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
-    [self sendEventWithName:kIronSourceRewardedVideoAdRewarded body:@{
-        @"placementName": [placementInfo placementName],
-        @"rewardName": [placementInfo rewardName],
-        @"rewardAmount": [placementInfo rewardAmount]
-    }];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(placementInfo.placementName != nil) {
+        args[@"placementName"] = placementInfo.placementName;
+    }
+    if(placementInfo.rewardName != nil) {
+        args[@"rewardName"] = placementInfo.rewardName;
+    }
+    if(placementInfo.rewardAmount != nil) {
+        args[@"rewardAmount"] = placementInfo.rewardAmount;
+    }
+    [self sendEventWithName:kIronSourceRewardedVideoAdRewarded body:args];
 }
 
 - (void)didFailToShowWithError:(NSError *)error andAdInfo:(ISAdInfo *)adInfo {
-    [self sendEventWithName:kIronSourceRewardedVideoFailedToShow body:error.userInfo[@"NSLocalizedDescription"]];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(error != nil){
+        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
+    }
+    if(error != nil && error.userInfo != nil){
+        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
+    }
+    [self sendEventWithName:kIronSourceRewardedVideoFailedToShow body:args];
 }
 
 - (void)didOpenWithAdInfo:(ISAdInfo *)adInfo {

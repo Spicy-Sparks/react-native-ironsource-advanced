@@ -65,7 +65,14 @@ RCT_EXPORT_METHOD(isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject
 }
 
 - (void)didFailToShowWithError:(NSError *)error andAdInfo:(ISAdInfo *)adInfo {
-    [self sendEventWithName:kIronSourceInterstitialFailedToShow body:error.userInfo[@"NSLocalizedDescription"]];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(error != nil) {
+        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
+    }
+    if(error != nil && error.userInfo != nil) {
+        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
+    }
+    [self sendEventWithName:kIronSourceInterstitialFailedToShow body:args];
 }
 
 - (void)didClickWithAdInfo:(ISAdInfo *)adInfo {
@@ -81,7 +88,14 @@ RCT_EXPORT_METHOD(isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject
 }
 
 - (void)didFailToLoadWithError:(NSError *)error {
-    [self sendEventWithName:kIronSourceInterstitialFailedToLoad body:error.userInfo[@"NSLocalizedDescription"]];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(error != nil) {
+        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
+    }
+    if(error != nil && error.userInfo != nil) {
+        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
+    }
+    [self sendEventWithName:kIronSourceInterstitialFailedToLoad body:args];
 }
 
 @end

@@ -74,7 +74,14 @@ RCT_EXPORT_METHOD(isOfferwallAvailable:(RCTPromiseResolveBlock)resolve reject:(R
 }
 
 - (void)offerwallDidFailToShowWithError:(NSError *)error {
-    [self sendEventWithName:kIronSourceOfferwallFailedToShow body:error.userInfo[@"NSLocalizedDescription"]];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(error != nil) {
+        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
+    }
+    if(error != nil && error.userInfo != nil) {
+        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
+    }
+    [self sendEventWithName:kIronSourceOfferwallFailedToShow body:args];
 }
 
 - (void)offerwallDidClose {
@@ -87,7 +94,14 @@ RCT_EXPORT_METHOD(isOfferwallAvailable:(RCTPromiseResolveBlock)resolve reject:(R
 }
 
 - (void)didFailToReceiveOfferwallCreditsWithError:(NSError *)error {
-    [self sendEventWithName:kIronSourceOfferwallFailedToReceiveCredits body:error.userInfo[@"NSLocalizedDescription"]];
+    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+    if(error != nil) {
+        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
+    }
+    if(error != nil && error.userInfo != nil) {
+        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
+    }
+    [self sendEventWithName:kIronSourceOfferwallFailedToReceiveCredits body:args];
 }
 
 @end

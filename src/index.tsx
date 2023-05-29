@@ -1,2 +1,5 @@
-export * from './ironsourceAdvanced'
-export * from './ironsourceInterstitial'
+export { default as Ironsource } from './ironsourceAdvanced'
+export { default as Interstitial } from './ironsourceInterstitial'
+export { default as Offerwall } from './ironsourceOfferwall'
+export { default as Rewarded } from './ironsourceRewarded'
+export { default as Segment } from './ironsourceSegment'
