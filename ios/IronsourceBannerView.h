@@ -1,0 +1,2 @@
+@interface IronsourceBannerView : RCTViewManager
+@end
