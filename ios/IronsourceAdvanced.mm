@@ -15,7 +15,7 @@ NSString *const kIronSourceImpressionDataDidSucceed = @"IMPRESSION_DATA_SUCCEED"
     RCTResponseSenderBlock _requestRewardedVideoCallback;
 }
 
-#pragma mark - instance
+#pragma mark - Instance
 
 + (instancetype)sharedInstance {
     static IronsourceAdvanced *instance = nil;

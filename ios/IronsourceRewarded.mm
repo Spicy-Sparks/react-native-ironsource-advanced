@@ -59,7 +59,7 @@ RCT_EXPORT_METHOD(isRewardedVideoAvailable:(RCTPromiseResolveBlock)resolve rejec
     }
 }
 
-#pragma mark delegate events
+#pragma mark Events
 
 - (void)hasAvailableAdWithAdInfo:(ISAdInfo *)adInfo {
     [self sendEventWithName:kIronSourceRewardedVideoAvailable body:nil];

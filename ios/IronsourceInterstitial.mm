@@ -54,7 +54,7 @@ RCT_EXPORT_METHOD(isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject
     }
 }
 
-#pragma mark - ISInterstitialDelegate
+#pragma mark - Events
 
 - (void)didLoadWithAdInfo:(ISAdInfo *)adInfo {
     [self sendEventWithName:kIronSourceInterstitialLoaded body:nil];

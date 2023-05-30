@@ -13,9 +13,11 @@ const ON_REWARDED_CLICKED = 'REWARDED_CLICKED'
 
 const load = () => IronsourceRewarded.loadRewardedVideo()
 
-const show = (placementName: string) => IronsourceRewarded.showRewardedVideo(placementName)
+const show = (placementName: string) =>
+  IronsourceRewarded.showRewardedVideo(placementName)
 
-const isAvailable = (): Promise<boolean> => IronsourceRewarded.isRewardedVideoAvailable()
+const isAvailable = (): Promise<boolean> =>
+  IronsourceRewarded.isRewardedVideoAvailable()
 
 const onAvailable = {
   setListener: (listener: () => void) => {
@@ -30,15 +32,18 @@ const onUnavailable = {
     eventEmitter.removeAllListeners(ON_REWARDED_UNAVAILABLE)
     eventEmitter.addListener(ON_REWARDED_UNAVAILABLE, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_REWARDED_UNAVAILABLE),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_REWARDED_UNAVAILABLE),
 }
 
 const onGotReward = {
-  setListener: (listener: (reward: {
-    placementName: string
-    rewardName: string
-    rewardAmount: number
-  }) => void) => {
+  setListener: (
+    listener: (reward: {
+      placementName: string
+      rewardName: string
+      rewardAmount: number
+    }) => void
+  ) => {
     eventEmitter.removeAllListeners(ON_REWARDED_GOT_REWARD)
     eventEmitter.addListener(ON_REWARDED_GOT_REWARD, listener)
   },
@@ -50,7 +55,8 @@ const onFailedToShow = {
     eventEmitter.removeAllListeners(ON_REWARDED_FAILED_TO_SHOW)
     eventEmitter.addListener(ON_REWARDED_FAILED_TO_SHOW, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_REWARDED_FAILED_TO_SHOW),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_REWARDED_FAILED_TO_SHOW),
 }
 
 const onOpened = {
@@ -98,5 +104,5 @@ export default {
   onOpened,
   onClosed,
   onClicked,
-  removeAllListeners
+  removeAllListeners,
 }

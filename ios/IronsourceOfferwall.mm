@@ -56,9 +56,7 @@ RCT_EXPORT_METHOD(isOfferwallAvailable:(RCTPromiseResolveBlock)resolve reject:(R
     }
 }
 
-#pragma mark delegate events
-
-#pragma mark - ISOfferwallDelegate
+#pragma mark Events
 
 - (void)offerwallHasChangedAvailability:(BOOL)available {
     if(available == YES) {

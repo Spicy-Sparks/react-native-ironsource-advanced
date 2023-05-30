@@ -13,9 +13,11 @@ const ON_INTERSTITIAL_OPENED = 'INTERSTITIAL_OPENED'
 
 const load = () => IronsourceInterstitial.loadInterstitial()
 
-const show = (placementName: string) => IronsourceInterstitial.showInterstitial(placementName)
+const show = (placementName: string) =>
+  IronsourceInterstitial.showInterstitial(placementName)
 
-const isAvailable = (): Promise<boolean> => IronsourceInterstitial.isInterstitialAvailable()
+const isAvailable = (): Promise<boolean> =>
+  IronsourceInterstitial.isInterstitialAvailable()
 
 const onLoaded = {
   setListener: (listener: () => void) => {
@@ -38,7 +40,8 @@ const onFailedToShow = {
     eventEmitter.removeAllListeners(ON_INTERSTITIAL_FAILED_TO_SHOW)
     eventEmitter.addListener(ON_INTERSTITIAL_FAILED_TO_SHOW, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_INTERSTITIAL_FAILED_TO_SHOW),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_INTERSTITIAL_FAILED_TO_SHOW),
 }
 
 const onFailedToLoad = {
@@ -46,7 +49,8 @@ const onFailedToLoad = {
     eventEmitter.removeAllListeners(ON_INTERSTITIAL_FAILED_TO_LOAD)
     eventEmitter.addListener(ON_INTERSTITIAL_FAILED_TO_LOAD, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_INTERSTITIAL_FAILED_TO_LOAD),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_INTERSTITIAL_FAILED_TO_LOAD),
 }
 
 const onClicked = {
@@ -54,7 +58,8 @@ const onClicked = {
     eventEmitter.removeAllListeners(ON_INTERSTITIAL_CLICKED)
     eventEmitter.addListener(ON_INTERSTITIAL_CLICKED, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_INTERSTITIAL_CLICKED),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_INTERSTITIAL_CLICKED),
 }
 
 const onOpened = {
@@ -94,5 +99,5 @@ export default {
   onClicked,
   onOpened,
   onClosed,
-  removeAllListeners
+  removeAllListeners,
 }

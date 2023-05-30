@@ -16,7 +16,11 @@ const init = (appKey: string, options: InitOptions = {}): Promise<void> => {
 
 export type AdUnit = 'REWARDED_VIDEO' | 'INTERSTITIAL' | 'OFFERWALL' | 'BANNER'
 
-const initWithAdUnits = (appKey: string, adUnits: Array<AdUnit>, options: InitOptions = {}): Promise<void> => {
+const initWithAdUnits = (
+  appKey: string,
+  adUnits: Array<AdUnit>,
+  options: InitOptions = {}
+): Promise<void> => {
   return IronsourceAdvanced.init(appKey, adUnits, options)
 }
 
@@ -25,40 +29,45 @@ const onInitCompleted = {
     eventEmitter.removeAllListeners(ON_INIT_COMPLETED)
     eventEmitter.addListener(ON_INIT_COMPLETED, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_INIT_COMPLETED)
+  removeListener: () => eventEmitter.removeAllListeners(ON_INIT_COMPLETED),
 }
 
 const onImpressionSucceed = {
-  setListener: (listener: (data: {
-    auctionId?: string,
-    adUnit?: string,
-    country?: string,
-    ab?: string,
-    segmentName?: string,
-    placement?: string,
-    adNetwork?: string,
-    instanceName?: string,
-    instanceId?: string,
-    revenue?: number,
-    precision?: string,
-    lifetimeRevenue?: number,
-    encryptedCPM?: string
-  }) => any) => {
+  setListener: (
+    listener: (data: {
+      auctionId?: string
+      adUnit?: string
+      country?: string
+      ab?: string
+      segmentName?: string
+      placement?: string
+      adNetwork?: string
+      instanceName?: string
+      instanceId?: string
+      revenue?: number
+      precision?: string
+      lifetimeRevenue?: number
+      encryptedCPM?: string
+    }) => any
+  ) => {
     eventEmitter.removeAllListeners(ON_IMPRESSION_SUCCEED)
     eventEmitter.addListener(ON_IMPRESSION_SUCCEED, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_IMPRESSION_SUCCEED)
+  removeListener: () => eventEmitter.removeAllListeners(ON_IMPRESSION_SUCCEED),
 }
 
-const addImpressionDataDelegate = () => IronsourceAdvanced.addImpressionDataDelegate()
+const addImpressionDataDelegate = () =>
+  IronsourceAdvanced.addImpressionDataDelegate()
 
 const setConsent = (consent: boolean) => IronsourceAdvanced.setConsent(consent)
 
 const setUserId = (userId: string) => IronsourceAdvanced.setUserId(userId)
 
-const setDynamicUserId = (userId: string) => IronsourceAdvanced.setDynamicUserId(userId)
+const setDynamicUserId = (userId: string) =>
+  IronsourceAdvanced.setDynamicUserId(userId)
 
-const getAdvertiserId = (): Promise<string> => IronsourceAdvanced.getAdvertiserId()
+const getAdvertiserId = (): Promise<string> =>
+  IronsourceAdvanced.getAdvertiserId()
 
 const removeAllListeners = () => {
   onInitCompleted.removeListener()

@@ -9,11 +9,14 @@ const ON_OFFERWALL_SHOWN = 'OFFERWALL_SHOWN'
 const ON_OFFERWALL_FAILED_TO_SHOW = 'OFFERWALL_FAILED_TO_SHOW'
 const ON_OFFERWALL_CLOSED = 'OFFERWALL_CLOSED'
 const ON_OFFERWALL_RECEIVED_CREDITS = 'OFFERWALL_RECEIVED_CREDITS'
-const ON_OFFERWALL_FAILED_TO_RECEIVE_CREDITS = 'OFFERWALL_FAILED_TO_RECEIVE_CREDITS'
+const ON_OFFERWALL_FAILED_TO_RECEIVE_CREDITS =
+  'OFFERWALL_FAILED_TO_RECEIVE_CREDITS'
 
-const show = (placementName: string) => IronsourceOfferwall.showOfferwall(placementName)
+const show = (placementName: string) =>
+  IronsourceOfferwall.showOfferwall(placementName)
 
-const isAvailable = (): Promise<boolean> => IronsourceOfferwall.isOfferwallAvailable()
+const isAvailable = (): Promise<boolean> =>
+  IronsourceOfferwall.isOfferwallAvailable()
 
 const onAvailable = {
   setListener: (listener: () => void) => {
@@ -28,7 +31,8 @@ const onUnavailable = {
     eventEmitter.removeAllListeners(ON_OFFERWALL_UNAVAILABLE)
     eventEmitter.addListener(ON_OFFERWALL_UNAVAILABLE, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_OFFERWALL_UNAVAILABLE),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_OFFERWALL_UNAVAILABLE),
 }
 
 const onShown = {
@@ -44,7 +48,8 @@ const onFailedToShow = {
     eventEmitter.removeAllListeners(ON_OFFERWALL_FAILED_TO_SHOW)
     eventEmitter.addListener(ON_OFFERWALL_FAILED_TO_SHOW, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_OFFERWALL_FAILED_TO_SHOW),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_OFFERWALL_FAILED_TO_SHOW),
 }
 
 const onClosed = {
@@ -56,15 +61,18 @@ const onClosed = {
 }
 
 const onReceivedCredits = {
-  setListener: (listener: (credits: {
-    credits: number
-    totalCredits: number
-    totalCreditsFlag: boolean
-  }) => void) => {
+  setListener: (
+    listener: (credits: {
+      credits: number
+      totalCredits: number
+      totalCreditsFlag: boolean
+    }) => void
+  ) => {
     eventEmitter.removeAllListeners(ON_OFFERWALL_RECEIVED_CREDITS)
     eventEmitter.addListener(ON_OFFERWALL_RECEIVED_CREDITS, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_OFFERWALL_RECEIVED_CREDITS),
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_OFFERWALL_RECEIVED_CREDITS),
 }
 
 const onFailedToReceivedCredits = {
@@ -72,8 +80,9 @@ const onFailedToReceivedCredits = {
     eventEmitter.removeAllListeners(ON_OFFERWALL_FAILED_TO_RECEIVE_CREDITS)
     eventEmitter.addListener(ON_OFFERWALL_FAILED_TO_RECEIVE_CREDITS, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_OFFERWALL_FAILED_TO_RECEIVE_CREDITS),
-} 
+  removeListener: () =>
+    eventEmitter.removeAllListeners(ON_OFFERWALL_FAILED_TO_RECEIVE_CREDITS),
+}
 
 const removeAllListeners = () => {
   onAvailable.removeListener()
@@ -95,5 +104,5 @@ export default {
   onClosed,
   onReceivedCredits,
   onFailedToReceivedCredits,
-  removeAllListeners
+  removeAllListeners,
 }
