@@ -10,6 +10,8 @@ const ON_BANNER_PRESENTED = 'BANNER_PRESENTED'
 const ON_BANNER_LEFT = 'BANNER_LEFT'
 const ON_BANNER_DISMISSED = 'BANNER_DISMISSED'
 
+const init = () => IronsourceBanner.addEventsDelegate()
+
 const onLoaded = {
   setListener: (listener: () => void) => {
     eventEmitter.removeAllListeners(ON_BANNER_LOADED)
@@ -69,6 +71,7 @@ const removeAllListeners = () => {
 }
 
 export default {
+  init,
   onLoaded,
   onFailedToLoad,
   onClicked,
