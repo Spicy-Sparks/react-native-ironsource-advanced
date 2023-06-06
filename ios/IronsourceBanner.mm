@@ -31,8 +31,14 @@ RCT_EXPORT_METHOD(addEventsDelegate)
 
 #pragma mark - Events
 
+#define BannerLoaded @"BannerLoaded"
+
 - (void)didLoad:(ISBannerView *)bannerView withAdInfo:(ISAdInfo *)adInfo {
     [self sendEventWithName:kIronSourceBannerLoaded body:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BannerLoaded object:nil userInfo:@{
+        @"view": bannerView
+    }];
 }
 
 - (void)didFailToLoadWithError:(NSError *)error {
