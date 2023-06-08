@@ -1,85 +1,143 @@
 #import "IronsourceBannerView.h"
-#import <IronSource/IronSource.h>
-#import <React/RCTViewManager.h>
+#import "IronsourceBanner.h"
+#import <Ironsource/IronSource.h>
+
+@implementation IronsourceBannerViewController
+
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.delegate viewWillAppear];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.delegate viewWillDisappear];
+}
+
+@end
 
 @implementation IronsourceBannerView
 
-RCT_EXPORT_MODULE(IronsourceBannerView)
-
 #define BannerLoaded @"BannerLoaded"
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
-    self.loadedBannerView = FALSE;
+    
+    self.active = FALSE;
+    self.viewController = [[IronsourceBannerViewController alloc] init];
+    self.viewController.view = self;
+    self.viewController.delegate = self;
+    
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleBannerLoaded:) name:BannerLoaded object:nil];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            @synchronized(self) {
+                [IronSource loadBannerWithViewController:self.viewController size:ISBannerSize_BANNER];
+            }
+        });
     }
+    
     return self;
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self.loadedBannerView = FALSE;
+    self.active = FALSE;
 }
 
-- (UIView *)view {
-    self.bannerView = [[UIView alloc] init];
-    self.bannerViewController = [[UIViewController alloc] init];
-    self.bannerViewController.view = self.bannerView;
+- (BOOL)isVisible:(UIView *)view {
+    if (view.window == nil) {
+        return NO;
+    }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        @synchronized(self) {
-            ISBannerSize* size = [self getBannerSize:@"BANNER"];
-            [IronSource loadBannerWithViewController:self.bannerViewController size:size];
+    UIView *currentView = view;
+    while (currentView.superview) {
+        if (!CGRectIntersectsRect(currentView.superview.bounds, currentView.frame)) {
+            return NO;
         }
-    });
+        
+        if (currentView.isHidden) {
+            return NO;
+        }
+        
+        currentView = currentView.superview;
+    }
     
-    return self.bannerView;
+    return YES;
+}
+
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    self.active = [self isVisible:self];
+    if(self.active)
+        [self attachBanner];
+}
+
+- (void)didMoveToSuperview {
+    [super didMoveToSuperview];
+    self.active = [self isVisible:self];
+    if(self.active)
+        [self attachBanner];
+}
+
+- (void)viewWillAppear {
+    self.active = [self isVisible:self];
+    if(self.active)
+        [self attachBanner];
+}
+
+- (void)viewWillDisappear {
+    self.active = FALSE;
 }
 
 - (void)handleBannerLoaded:(NSNotification *)notification {
-    if(self.loadedBannerView)
+    if(!self.active)
         return;
-    self.loadedBannerView = TRUE;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        @synchronized(self) {
-            ISBannerView *bannerView = notification.userInfo[@"view"];
-            self.bannerView = [[UIView alloc] init];
-            [self.bannerView addSubview:bannerView];
-
-            bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
-                                       UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-
-            CGPoint centerPoint = CGPointMake(CGRectGetMidX(self.bannerView.bounds), CGRectGetMidY(self.bannerView.bounds));
-            bannerView.center = centerPoint;
-
-            // Add constraints to center the subview using Auto Layout
-            /*
-            NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:subview attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:parentView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0];
-            NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:subview attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:parentView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0.0];
-
-            [parentView addConstraints:@[centerXConstraint, centerYConstraint]];
-            */
-            
-            [self.bannerView setAccessibilityLabel:@"bannerContainer"];
-            
-            self.bannerViewController.view = self.bannerView;
-        }
-    });
+    [self attachBanner];
 }
 
-- (ISBannerSize *)getBannerSize:(NSString *)description {
-    if([description isEqualToString:@"SMART"]) {
-        return ISBannerSize_SMART;
-    } else if ([description isEqualToString:@"BANNER"]) {
-        return ISBannerSize_BANNER;
-    } else if ([description isEqualToString:@"RECTANGLE"]) {
-        return ISBannerSize_RECTANGLE;
-    } else if ([description isEqualToString:@"LARGE"]) {
-        return ISBannerSize_LARGE;
-    } else {
-        return ISBannerSize_BANNER;
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if(!self.active)
+        return;
+    
+    ISBannerView *bannerView = [IronsourceBanner bannerView];
+    
+    if (bannerView != nil) {
+        CGPoint centerPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+        bannerView.center = centerPoint;
     }
+}
+
+- (void)attachBanner {
+    ISBannerView *bannerView = [IronsourceBanner bannerView];
+    
+    if(bannerView == nil)
+        return;
+    
+    [super addSubview:bannerView];
+
+    bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+                               UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+
+    CGPoint centerPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    bannerView.center = centerPoint;
+
+    /*NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:bannerView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0];
+    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:bannerView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0.0];
+
+    [super addConstraints:@[centerXConstraint, centerYConstraint]];*/
+    
+    [self setAccessibilityLabel:@"bannerContainer"];
 }
 
 @end

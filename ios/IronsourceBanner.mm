@@ -29,16 +29,26 @@ RCT_EXPORT_METHOD(addEventsDelegate)
     [IronSource setLevelPlayBannerDelegate:self];
 }
 
+static ISBannerView *_bannerView = nil;
+
++ (ISBannerView *)bannerView {
+    return _bannerView;
+}
+
++ (void)setBannerView:(ISBannerView *)value {
+    _bannerView = value;
+}
+
 #pragma mark - Events
 
 #define BannerLoaded @"BannerLoaded"
 
 - (void)didLoad:(ISBannerView *)bannerView withAdInfo:(ISAdInfo *)adInfo {
+    bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+                               UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [IronsourceBanner setBannerView:bannerView];
     [self sendEventWithName:kIronSourceBannerLoaded body:nil];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:BannerLoaded object:nil userInfo:@{
-        @"view": bannerView
-    }];
+    [[NSNotificationCenter defaultCenter] postNotificationName:BannerLoaded object:nil userInfo:nil];
 }
 
 - (void)didFailToLoadWithError:(NSError *)error {

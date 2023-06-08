@@ -11,4 +11,6 @@
 @interface IronsourceBanner : RCTEventEmitter <RCTBridgeModule, LevelPlayBannerDelegate>
 #endif
 
+@property (class, nonatomic, strong) ISBannerView *bannerView;
+
 @end

@@ -1,10 +1,24 @@
+#import <UIKit/UIKit.h>
+#import "IronsourceBannerViewController.h"
 #import <React/RCTViewManager.h>
 #import <IronSource/IronSource.h>
 
-@interface IronsourceBannerView : RCTViewManager
+@protocol IronsourceBannerViewControllerDelegate <NSObject>
 
-@property (nonatomic,strong) ISBannerView* bannerView;
-@property (nonatomic,strong) UIViewController* bannerViewController;
-@property (nonatomic) BOOL loadedBannerView;
+- (void)viewWillAppear;
+- (void)viewWillDisappear;
+
+@end
+
+@interface IronsourceBannerViewController : UIViewController
+
+@property (nonatomic, weak) id<IronsourceBannerViewControllerDelegate> delegate;
+
+@end
+
+@interface IronsourceBannerView : UIView <IronsourceBannerViewControllerDelegate>
+
+@property (nonatomic,strong) IronsourceBannerViewController* viewController;
+@property (nonatomic,assign) BOOL active;
 
 @end
