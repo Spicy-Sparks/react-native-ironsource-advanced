@@ -124,7 +124,7 @@ RCT_EXPORT_METHOD(getAdvertiserId:(RCTPromiseResolveBlock)resolve reject:(RCTPro
 
 - (void)impressionDataDidSucceed:(ISImpressionData *)impressionData {
     NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
-    if(impressionData == nil){
+    if(impressionData != nil){
         if(impressionData.auction_id != nil) {
             args[@"auctionId"] = impressionData.auction_id;
         }
@@ -149,7 +149,7 @@ RCT_EXPORT_METHOD(getAdvertiserId:(RCTPromiseResolveBlock)resolve reject:(RCTPro
         if(impressionData.instance_name != nil) {
             args[@"instanceName"] = impressionData.instance_name;
         }
-        if(impressionData.ad_unit != nil) {
+        if(impressionData.instance_id != nil) {
             args[@"instanceId"] = impressionData.instance_id;
         }
         if(impressionData.revenue != nil) {
