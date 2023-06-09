@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import { StyleSheet, View } from 'react-native'
-// import { BannerView } from 'react-native-ironsource-advanced'
+import { BannerView } from 'react-native-ironsource-advanced'
 
 export default function App() {
   return (
     <View style={styles.container}>
-      {/* <BannerView /> */}
+      <BannerView />
     </View>
   )
 }
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'red'
+    backgroundColor: 'red',
   },
   box: {
     width: 60,
