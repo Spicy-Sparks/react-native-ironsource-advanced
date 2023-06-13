@@ -9,10 +9,10 @@ class IronsourceAdvancedPackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
     return listOf(
       IronsourceAdvancedModule(reactContext),
-      IronsourceAdvancedModule(reactContext),
       IronsourceInterstitialModule(reactContext),
       IronsourceRewardedModule(reactContext),
-      IronsourceOfferwallModule(reactContext)
+      IronsourceOfferwallModule(reactContext),
+      IronsourceBannerModule(reactContext)
     )
   }
 
