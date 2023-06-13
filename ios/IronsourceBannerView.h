@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#import "IronsourceBannerViewController.h"
 #import <React/RCTViewManager.h>
 #import <IronSource/IronSource.h>
 
