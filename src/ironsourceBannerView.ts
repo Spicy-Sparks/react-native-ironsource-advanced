@@ -15,7 +15,10 @@ type BannerViewProps = {
   style?: ViewStyle
 }
 
-const ComponentName = 'IronsourceBannerViewManager'
+const ComponentName = Platform.select({
+  ios: 'IronsourceBannerView',
+  default: 'IronsourceBannerViewManager'
+})
 
 export default UIManager.getViewManagerConfig(ComponentName) != null
   ? requireNativeComponent<BannerViewProps>(ComponentName)
