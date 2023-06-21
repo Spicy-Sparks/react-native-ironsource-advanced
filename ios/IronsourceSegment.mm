@@ -7,23 +7,19 @@
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(create)
-{
+RCT_EXPORT_METHOD(create) {
     segment = [[ISSegment alloc] init];
 }
 
-RCT_EXPORT_METHOD(setSegmentName:(NSString *)name)
-{
+RCT_EXPORT_METHOD(setSegmentName:(NSString *)name) {
     [segment setSegmentName:name];
 }
 
-RCT_EXPORT_METHOD(setCustomValue:(NSString *)value forKey:(NSString *)key)
-{
+RCT_EXPORT_METHOD(setCustomValue:(NSString *)value forKey:(NSString *)key) {
     [segment setCustomValue:value forKey:key];
 }
 
-RCT_EXPORT_METHOD(activate)
-{
+RCT_EXPORT_METHOD(activate) {
     if (segment) {
         [IronSource setSegment:segment];
     }
