@@ -96,13 +96,13 @@ RCT_EXPORT_METHOD(setConsent:(BOOL)consent)
 
 RCT_EXPORT_METHOD(setUserId:(NSString *)userId)
 {
-    if(userId != nil)
+    if(userId != nil && userId.length > 0)
         [IronSource setUserId:userId];
 }
 
 RCT_EXPORT_METHOD(setDynamicUserId:(NSString *)userId)
 {
-    if(userId != nil)
+    if(userId != nil && userId.length > 0)
         [IronSource setDynamicUserId:userId];
 }
 

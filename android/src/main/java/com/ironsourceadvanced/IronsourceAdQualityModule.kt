@@ -35,7 +35,7 @@ class IronsourceAdQualityModule(reactContext: ReactApplicationContext?) :
   @ReactMethod
   fun init(appKey: String, userId: String?) {
     val adQualityConfigBuilder = ISAdQualityConfig.Builder()
-    if(userId != null)
+    if(!userId.isNullOrEmpty())
       adQualityConfigBuilder.setUserId(userId)
     val adQualityConfig = adQualityConfigBuilder.build()
     IronSourceAdQuality.getInstance().initialize(reactApplicationContext, appKey, adQualityConfig)
@@ -43,7 +43,8 @@ class IronsourceAdQualityModule(reactContext: ReactApplicationContext?) :
 
   @ReactMethod
   fun setUserId(userId: String) {
-    IronSourceAdQuality.getInstance().changeUserId(userId)
+    if(!userId.isNullOrEmpty())
+      IronSourceAdQuality.getInstance().changeUserId(userId)
   }
 
   @ReactMethod

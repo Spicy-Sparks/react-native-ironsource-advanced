@@ -11,13 +11,13 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(init:(NSString*) appKey
                   userId:(NSString*)userId) {
     ISAdQualityConfig *adQualityConfig = [ISAdQualityConfig config];
-    if(userId != nil)
+    if(userId != nil && userId.length > 0)
         adQualityConfig.userId = userId;
     [[IronSourceAdQuality getInstance] initializeWithAppKey:appKey andConfig:adQualityConfig];
 }
 
 RCT_EXPORT_METHOD(setUserId:(NSString *)userId) {
-    if(userId != nil)
+    if(userId != nil && userId.length > 0)
         [[IronSourceAdQuality getInstance] changeUserId:userId];
 }
 

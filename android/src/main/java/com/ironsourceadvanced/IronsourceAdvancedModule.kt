@@ -72,13 +72,13 @@ class IronsourceAdvancedModule(reactContext: ReactApplicationContext?) :
 
   @ReactMethod
   fun setUserId(userId: String) {
-    if(userId != null)
+    if(!userId.isNullOrEmpty())
       IronSource.setUserId(userId)
   }
 
   @ReactMethod
   fun setDynamicUserId(userId: String) {
-    if(userId != null)
+    if(!userId.isNullOrEmpty())
       IronSource.setDynamicUserId(userId)
   }
 
