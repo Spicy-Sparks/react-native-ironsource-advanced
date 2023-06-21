@@ -8,6 +8,13 @@ NSString *const kIronSourceAdQualityInitializationFailed = @"INIT_FAILED";
 
 RCT_EXPORT_MODULE()
 
+- (NSArray<NSString *> *)supportedEvents {
+    return @[
+        kIronSourceAdQualityInitializationCompleted,
+        kIronSourceAdQualityInitializationFailed
+    ];
+}
+
 RCT_EXPORT_METHOD(init:(NSString*) appKey
                   userId:(NSString*)userId) {
     ISAdQualityConfig *adQualityConfig = [ISAdQualityConfig config];
