@@ -1,5 +1,6 @@
 package com.ironsourceadvanced
 
+import android.content.Intent
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -17,7 +18,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   companion object {
     const val NAME = "IronsourceBanner"
-    var bannerView: IronSourceBannerLayout? = null;
+    var bannerView: IronSourceBannerLayout? = null
+    var isAdLoaded = false
   }
 
   override fun getName(): String {
@@ -47,6 +49,9 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdLoaded(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LOADED", null)
+    val intent = Intent("com.esound.banner_loaded")
+    currentActivity?.applicationContext?.sendBroadcast(intent)
+    isAdLoaded = true
   }
 
   override fun onAdLoadFailed(error: IronSourceError?) {
@@ -56,6 +61,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
       args.putString("message", error.errorMessage)
     }
     sendEvent(reactApplicationContext, "BANNER_FAILED_TO_LOAD", args)
+    isAdLoaded = false
   }
 
   override fun onAdClicked(adInfo: AdInfo?) {
@@ -64,6 +70,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdLeftApplication(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LEFT", null)
+    isAdLoaded = false
   }
 
   override fun onAdScreenPresented(adInfo: AdInfo?) {
@@ -72,5 +79,6 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdScreenDismissed(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_DISMISSED", null)
+    isAdLoaded = false
   }
 }
