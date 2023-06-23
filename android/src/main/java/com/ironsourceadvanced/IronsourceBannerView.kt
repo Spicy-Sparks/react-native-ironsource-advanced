@@ -1,99 +1,89 @@
 package com.ironsourceadvanced
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Resources
-import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import android.view.*
 import android.widget.RelativeLayout
+import androidx.viewpager.widget.ViewPager
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.facebook.react.uimanager.ThemedReactContext
 import com.ironsource.mediationsdk.IronSource
 import java.util.*
 import kotlin.math.abs
 
+@SuppressLint("ViewConstructor")
 class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context) {
   private var mContext: ThemedReactContext? = null
-  private var isLayoutVisible = false
-  private var isActive = false
-  private var firstTime = true
-  private var randomNumber = 0
 
+  private val bannerLayoutParams = LayoutParams(width, height).apply {
+    gravity = Gravity.CENTER
+  }
 
   init {
     mContext = context
 
-    randomNumber = (1000..1000000).random()
-
     viewTreeObserver.addOnGlobalLayoutListener {
-      val isVisible = isLayoutVisible()
-      if (isVisible != isLayoutVisible) {
-        if (isVisible) {
-          onLayoutAppear()
-        } else {
-          onLayoutDisappear()
-        }
-      }
-      isLayoutVisible = isVisible
+      if (isLayoutVisible()) onLayoutAppear()
     }
 
     addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
       override fun onViewAttachedToWindow(v: View) {
-        val isVisible = isLayoutVisible()
-        if (isVisible != isLayoutVisible) {
-          if (isVisible) {
-            onLayoutAppear()
-          } else {
-            onLayoutDisappear()
-          }
-        }
-        isLayoutVisible = isVisible
+        if (isLayoutVisible()) onLayoutAppear()
       }
 
       override fun onViewDetachedFromWindow(v: View) {
-        val isVisible = isLayoutVisible()
-        if (isVisible != isLayoutVisible) {
-          if (isVisible) {
-            onLayoutAppear()
-          } else {
-            onLayoutDisappear()
-          }
-        }
-        isLayoutVisible = isVisible
+        if (isLayoutVisible()) onLayoutAppear()
       }
+    })
+    val viewPager: ViewPager? = findViewPager()
+
+    viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+      override fun onPageSelected(position: Int) {
+        if (isLayoutVisible()) onLayoutAppear()
+      }
+
+      override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+      override fun onPageScrollStateChanged(state: Int) {}
     })
 
     val intentFilter = IntentFilter()
-    intentFilter.addAction("com.esound.banner_loaded")
-    intentFilter.addAction("com.esound.tab_selected")
+    intentFilter.addAction("com.ironsourceadvanced.banner_loaded")
+    intentFilter.addAction("com.navigation.bottom_tab_selected")
 
     val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent) {
-
-        if (intent?.action  === "com.esound.banner_loaded") {
-          Log.d("rreceived", "rreceived")
+        if (intent.action === "com.ironsourceadvanced.banner_loaded") {
           if (isLayoutVisible()) {
-            val bannerLayoutParams = LayoutParams(width, height).apply {
-              gravity = Gravity.CENTER
-            }
             val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
             IronsourceBannerModule.bannerView?.visibility = View.VISIBLE
             bannerParentView?.removeView(IronsourceBannerModule.bannerView)
-
             addView(IronsourceBannerModule.bannerView, bannerLayoutParams)
           }
-
-        } else if (intent?.action  === "com.esound.tab_selected") {
-          Log.d("tabvisible???", "tabvisible???" + isLayoutVisible() + randomNumber)
+        } else if (intent.action === "com.navigation.bottom_tab_selected") {
+          if (isLayoutVisible()) onLayoutAppear()
         }
       }
     }
-
     mContext?.registerReceiver(receiver, intentFilter)
+  }
+
+  private fun findViewPager(): ViewPager? {
+    var parentView: View? = this
+
+    while (parentView != null) {
+      if (parentView is ViewPager) {
+        return parentView
+      }
+      parentView = parentView.parent as? View
+    }
+
+    return null
   }
 
   fun isLayoutVisible(): Boolean {
@@ -114,10 +104,6 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
       if (parent.visibility != View.VISIBLE || parent.alpha == 0f) {
         return false
       }
-      parent.getGlobalVisibleRect(viewRect)
-      if (!screenRect.intersect(viewRect)) {
-        return false
-      }
       parent = parent.parent as? View
     }
 
@@ -133,47 +119,29 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
           attachBanner()
         }
       }
-    }, 1000L)
-
-    Log.d("visible???appear", "visible???appear" + isLayoutVisible() + randomNumber)
-  }
-
-  private fun onLayoutDisappear() {
-    isActive = false
-
-//    if (IronsourceBannerModule.bannerView?.parent != null)
-      removeView(IronsourceBannerModule.bannerView)
-
-    Log.d("visible???disappear", "visible???disappear" + isLayoutVisible() + randomNumber)
+    }, 750L)
   }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    val isVisible = isLayoutVisible()
-    if (isVisible != isLayoutVisible) {
-      if (isVisible) {
-        onLayoutAppear()
-      } else {
-        onLayoutDisappear()
-      }
-    }
-    isLayoutVisible = isVisible
+    if (isLayoutVisible()) onLayoutAppear()
   }
 
+  override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    super.onLayout(changed, l, t, r, b)
+    if (isLayoutVisible()) onLayoutAppear()
+  }
 
   private fun attachBanner () {
-    if(isActive)
+    if(IronsourceBannerModule.bannerView?.parent == this)
       return
-
-    isActive = true
 
     runOnUiThread {
       try {
-//        if (!IronsourceBannerModule.isAdLoaded) {
+        if (IronsourceBannerModule.bannerView?.parent != null)
+          (IronsourceBannerModule.bannerView?.parent as RelativeLayout).removeView(IronsourceBannerModule.bannerView)
 
-          val bannerLayoutParams = LayoutParams(width, height).apply {
-            gravity = Gravity.CENTER
-          }
+        if (!IronsourceBannerModule.isAdLoaded) {
 
           val activityBannerLayoutParams = LayoutParams(width, height).apply {
             gravity = Gravity.CENTER
@@ -181,10 +149,6 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
           }
 
           layoutParams = bannerLayoutParams
-          clipChildren = false
-
-          //         var mBanner = IronSource.createBanner(mContext?.currentActivity, ISBannerSize.BANNER)
-          IronsourceBannerModule.bannerView?.setBackgroundColor(Color.BLUE)
 
           IronSource.loadBanner(IronsourceBannerModule.bannerView)
 
@@ -195,10 +159,10 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
 
           IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
 
-       /* } else {
+        } else {
           addView(IronsourceBannerModule.bannerView, bannerLayoutParams)
-        }*/
-      } catch (e: Throwable) {}
+        }
+      } catch (_: Throwable) {}
     }
   }
 }

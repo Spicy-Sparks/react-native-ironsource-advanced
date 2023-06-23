@@ -49,9 +49,11 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdLoaded(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LOADED", null)
-    val intent = Intent("com.esound.banner_loaded")
-    currentActivity?.applicationContext?.sendBroadcast(intent)
-    isAdLoaded = true
+    if (!isAdLoaded) {
+      val intent = Intent("com.ironsourceadvanced.banner_loaded")
+      currentActivity?.applicationContext?.sendBroadcast(intent)
+      isAdLoaded = true
+    }
   }
 
   override fun onAdLoadFailed(error: IronSourceError?) {
