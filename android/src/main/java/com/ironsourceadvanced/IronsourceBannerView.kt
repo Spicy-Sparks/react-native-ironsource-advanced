@@ -12,16 +12,21 @@ import android.widget.RelativeLayout
 import androidx.viewpager.widget.ViewPager
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.facebook.react.uimanager.ThemedReactContext
+import com.ironsource.mediationsdk.ISBannerSize
 import com.ironsource.mediationsdk.IronSource
 import java.util.*
 import kotlin.math.abs
 
-@SuppressLint("ViewConstructor")
+ @SuppressLint("ViewConstructor")
 class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context) {
   private var mContext: ThemedReactContext? = null
 
   private val bannerLayoutParams = LayoutParams(width, height).apply {
     gravity = Gravity.CENTER
+  }
+
+  companion object {
+    var lastBannerParent: IronsourceBannerView? = null
   }
 
   init {
@@ -59,12 +64,7 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent) {
         if (intent.action === "com.ironsourceadvanced.banner_loaded") {
-          if (isLayoutVisible()) {
-            val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
-            IronsourceBannerModule.bannerView?.visibility = View.VISIBLE
-            bannerParentView?.removeView(IronsourceBannerModule.bannerView)
-            addView(IronsourceBannerModule.bannerView, bannerLayoutParams)
-          }
+          if (isLayoutVisible()) onLayoutAppear()
         } else if (intent.action === "com.navigation.bottom_tab_selected") {
           if (isLayoutVisible()) onLayoutAppear()
         }
@@ -133,22 +133,22 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
   }
 
   private fun attachBanner () {
-    if(IronsourceBannerModule.bannerView?.parent == this)
+    if(lastBannerParent == this)
       return
 
     runOnUiThread {
       try {
-        if (IronsourceBannerModule.bannerView?.parent != null)
-          (IronsourceBannerModule.bannerView?.parent as RelativeLayout).removeView(IronsourceBannerModule.bannerView)
-
         if (!IronsourceBannerModule.isAdLoaded) {
-
           val activityBannerLayoutParams = LayoutParams(width, height).apply {
             gravity = Gravity.CENTER
             bottomMargin = abs(1000)
           }
 
           layoutParams = bannerLayoutParams
+
+          val bannerView = IronSource.createBanner(mContext?.currentActivity, ISBannerSize.BANNER)
+          IronsourceBannerModule.bannerView = bannerView
+          IronsourceBannerModule.registerAdListener()
 
           IronSource.loadBanner(IronsourceBannerModule.bannerView)
 
@@ -158,9 +158,17 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
           )
 
           IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
+        }
 
-        } else {
+        if(IronsourceBannerModule.isAdLoaded) {
+          if(IronsourceBannerModule.bannerView?.parent != null) {
+            val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
+            bannerParentView?.removeView(IronsourceBannerModule.bannerView)
+          }
+
+          IronsourceBannerModule.bannerView?.visibility = View.VISIBLE
           addView(IronsourceBannerModule.bannerView, bannerLayoutParams)
+          lastBannerParent = this
         }
       } catch (_: Throwable) {}
     }
