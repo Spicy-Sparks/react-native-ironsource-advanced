@@ -46,7 +46,7 @@ class IronsourceInterstitialModule(reactContext: ReactApplicationContext?) :
   }
 
   @ReactMethod
-  fun isInterstitialReady(promise: Promise) {
+  fun isInterstitialAvailable(promise: Promise) {
     return promise.resolve(IronSource.isInterstitialReady())
   }
 
