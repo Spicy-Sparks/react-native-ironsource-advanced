@@ -19,9 +19,10 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
   LevelPlayBannerListener,
   LifecycleEventListener{
 
-  private val appLifecycleListener = AppLifecycleListener()
+  private var appLifecycleListener: AppLifecycleListener? = null
 
   init {
+    appLifecycleListener = AppLifecycleListener()
     val application = reactApplicationContext?.applicationContext as? Application
     application?.registerActivityLifecycleCallbacks(appLifecycleListener)
     module = this
@@ -41,6 +42,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
   override fun onHostResume() {
     val application = reactApplicationContext?.applicationContext as? Application
     application?.registerActivityLifecycleCallbacks(appLifecycleListener)
+
+
   }
 
   override fun onHostPause() {
@@ -74,10 +77,9 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdLoaded(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LOADED", null)
+    isAdLoaded = true
     val intent = Intent("com.ironsourceadvanced.banner_loaded")
     currentActivity?.applicationContext?.sendBroadcast(intent)
-    isAdLoaded = true
-
   }
 
   override fun onAdLoadFailed(error: IronSourceError?) {
@@ -88,6 +90,9 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     }
     sendEvent(reactApplicationContext, "BANNER_FAILED_TO_LOAD", args)
     isAdLoaded = false
+    IronSource.destroyBanner(bannerView)
+    val intent = Intent("com.ironsourceadvanced.banner_loaded")
+    currentActivity?.applicationContext?.sendBroadcast(intent)
   }
 
   override fun onAdClicked(adInfo: AdInfo?) {
@@ -96,30 +101,21 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdLeftApplication(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LEFT", null)
-    isAdLoaded = false
   }
 
   override fun onAdScreenPresented(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_PRESENTED", null)
-    val intent = Intent("com.ironsourceadvanced.banner_loaded")
-    currentActivity?.applicationContext?.sendBroadcast(intent)
-    isAdLoaded = true
   }
 
   override fun onAdScreenDismissed(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_DISMISSED", null)
-    isAdLoaded = false
   }
 
-  class AppLifecycleListener : Application.ActivityLifecycleCallbacks {
+  class AppLifecycleListener() : Application.ActivityLifecycleCallbacks {
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-      isAdLoaded = false
-    }
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
-    override fun onActivityStarted(activity: Activity) {
-      isAdLoaded = false
-    }
+    override fun onActivityStarted(activity: Activity) {}
 
     override fun onActivityResumed(activity: Activity) {}
 
@@ -128,7 +124,10 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     override fun onActivityStopped(activity: Activity) {}
 
     override fun onActivityDestroyed(activity: Activity) {
-      IronSource.destroyBanner(bannerView)
+      if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
+        isAdLoaded = false
+        IronSource.destroyBanner(bannerView)
+      }
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
