@@ -79,6 +79,8 @@
     self.active = [self isVisible:self];
     if(self.active)
         [self attachBanner];
+    else
+        [self performSelector:@selector(updateVisibility) withObject:nil afterDelay:1.0];
 }
 
 - (void)didMoveToSuperview {
@@ -86,12 +88,16 @@
     self.active = [self isVisible:self];
     if(self.active)
         [self attachBanner];
+    else
+        [self performSelector:@selector(updateVisibility) withObject:nil afterDelay:1.0];
 }
 
 - (void)viewWillAppear {
     self.active = [self isVisible:self];
     if(self.active)
         [self attachBanner];
+    else
+        [self performSelector:@selector(updateVisibility) withObject:nil afterDelay:1.0];
 }
 
 - (void)viewWillDisappear {
@@ -102,6 +108,12 @@
     if(!self.active)
         return;
     [self attachBanner];
+}
+
+- (void)updateVisibility {
+    self.active = [self isVisible:self];
+    if(self.active)
+        [self attachBanner];
 }
 
 - (void)layoutSubviews {
