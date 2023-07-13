@@ -131,25 +131,28 @@
 }
 
 - (void)attachBanner {
-    ISBannerView *bannerView = [IronsourceBanner bannerView];
-    
-    if(bannerView == nil)
-        return;
-    
-    [super addSubview:bannerView];
-
-    bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
-                               UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-
-    CGPoint centerPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-    bannerView.center = centerPoint;
-
-    /*NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:bannerView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0];
-    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:bannerView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0.0];
-
-    [super addConstraints:@[centerXConstraint, centerYConstraint]];*/
-    
-    [self setAccessibilityLabel:@"bannerContainer"];
+    @try {
+        ISBannerView *bannerView = [IronsourceBanner bannerView];
+        
+        if(bannerView == nil)
+            return;
+        
+        [super addSubview:bannerView];
+        
+        bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
+        UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        
+        CGPoint centerPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+        bannerView.center = centerPoint;
+        
+        /*NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:bannerView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0];
+         NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:bannerView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0.0];
+         
+         [super addConstraints:@[centerXConstraint, centerYConstraint]];*/
+        
+        [self setAccessibilityLabel:@"bannerContainer"];
+    }
+    @catch (NSException *exception) { }
 }
 
 @end
