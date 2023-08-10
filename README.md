@@ -8,16 +8,6 @@ React Native advanced adapter for IronSource mediation
 npm install react-native-ironsource-advanced
 ```
 
-## Usage
-
-```js
-import { multiply } from 'react-native-ironsource-advanced';
-
-// ...
-
-const result = await multiply(3, 7);
-```
-
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
