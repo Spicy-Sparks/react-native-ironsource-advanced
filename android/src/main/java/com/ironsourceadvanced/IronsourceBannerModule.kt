@@ -32,6 +32,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     const val NAME = "IronsourceBanner"
     var bannerView: IronSourceBannerLayout? = null
     var isAdLoaded = false
+    var bannerExists = false
     private var module: IronsourceBannerModule? = null
 
     fun registerAdListener() {
@@ -90,7 +91,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     }
     sendEvent(reactApplicationContext, "BANNER_FAILED_TO_LOAD", args)
     isAdLoaded = false
-    IronSource.destroyBanner(bannerView)
+    IronSource.loadBanner(bannerView)
     val intent = Intent("com.ironsourceadvanced.banner_loaded")
     currentActivity?.applicationContext?.sendBroadcast(intent)
   }
@@ -126,7 +127,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     override fun onActivityDestroyed(activity: Activity) {
       if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
         isAdLoaded = false
-        IronSource.destroyBanner(bannerView)
+        bannerExists = false
+        if (bannerView != null) IronSource.destroyBanner(bannerView)
       }
     }
 

@@ -36,9 +36,9 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent) {
         if (intent.action === "com.ironsourceadvanced.banner_loaded") {
-          if (isLayoutVisible()) onLayoutAppear(true)
+          if (isLayoutVisible()) onLayoutAppear(isRefresh = true)
         } else if (intent.action === "com.navigation.bottom_tab_selected") {
-          if (isLayoutVisible()) onLayoutAppear()
+          if (isLayoutVisible()) onLayoutAppear(bottomTabSelected = true)
         }
       }
     }
@@ -61,9 +61,11 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     return true
   }
 
-  private fun onLayoutAppear(isRefresh: Boolean = false) {
+  private fun onLayoutAppear(isRefresh: Boolean = false, bottomTabSelected: Boolean = false) {
     if (isRefresh) {
-      attachBanner(true)
+      attachBanner(isRefresh = true)
+    } else if (bottomTabSelected) {
+      attachBanner()
     } else {
       val timer = Timer()
       timer.schedule(object : TimerTask() {
@@ -89,7 +91,7 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
 
     runOnUiThread {
       try {
-        if (!IronsourceBannerModule.isAdLoaded) {
+        if (!IronsourceBannerModule.isAdLoaded && !IronsourceBannerModule.bannerExists) {
           val activityBannerLayoutParams = LayoutParams(width, height).apply {
             gravity = Gravity.CENTER
             bottomMargin = abs(1000)
@@ -98,6 +100,7 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
           layoutParams = bannerLayoutParams
 
           val bannerView = IronSource.createBanner(mContext?.currentActivity, ISBannerSize.BANNER)
+          IronsourceBannerModule.bannerExists = true
           IronsourceBannerModule.bannerView = bannerView
           IronsourceBannerModule.registerAdListener()
 
