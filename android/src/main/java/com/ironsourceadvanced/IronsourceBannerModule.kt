@@ -4,9 +4,13 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.FrameLayout
 import com.facebook.react.bridge.*
+import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.ironsource.mediationsdk.ISBannerSize
 import com.ironsource.mediationsdk.IronSource
 import com.ironsource.mediationsdk.IronSourceBannerLayout
 import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo
@@ -26,6 +30,9 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     val application = reactApplicationContext?.applicationContext as? Application
     application?.registerActivityLifecycleCallbacks(appLifecycleListener)
     module = this
+
+
+
   }
 
   companion object {
@@ -68,7 +75,28 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
   }
 
   @ReactMethod
-  fun addEventsDelegate() {}
+  fun addEventsDelegate() {
+    runOnUiThread {
+      var layoutParams: FrameLayout.LayoutParams? = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT
+      )
+
+      val bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
+      bannerExists = true
+      IronsourceBannerModule.bannerView = bannerView
+      registerAdListener()
+
+      IronSource.loadBanner(IronsourceBannerModule.bannerView)
+
+      currentActivity?.addContentView(
+        IronsourceBannerModule.bannerView,
+        layoutParams
+      )
+
+      IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
+    }
+  }
 
   @ReactMethod
   fun addListener(eventName: String?) {}
@@ -90,9 +118,11 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
       args.putString("message", error.errorMessage)
     }
     sendEvent(reactApplicationContext, "BANNER_FAILED_TO_LOAD", args)
+
+    IronSource.destroyBanner(bannerView)
     isAdLoaded = false
-    IronSource.loadBanner(bannerView)
-    val intent = Intent("com.ironsourceadvanced.banner_loaded")
+    bannerExists = false
+    val intent = Intent("com.ironsourceadvanced.banner_failed")
     currentActivity?.applicationContext?.sendBroadcast(intent)
   }
 

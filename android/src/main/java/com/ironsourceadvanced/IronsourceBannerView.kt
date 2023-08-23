@@ -14,7 +14,7 @@ import com.ironsource.mediationsdk.IronSource
 import java.util.*
 import kotlin.math.abs
 
- @SuppressLint("ViewConstructor")
+@SuppressLint("ViewConstructor")
 class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context) {
   private var mContext: ThemedReactContext? = null
 
@@ -32,11 +32,14 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     val intentFilter = IntentFilter()
     intentFilter.addAction("com.ironsourceadvanced.banner_loaded")
     intentFilter.addAction("com.navigation.bottom_tab_selected")
+    intentFilter.addAction("com.ironsourceadvanced.banner_failed")
 
     val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent) {
         if (intent.action === "com.ironsourceadvanced.banner_loaded") {
           if (isLayoutVisible()) onLayoutAppear(isRefresh = true)
+        } else if (intent.action === "com.ironsourceadvanced.banner_failed") {
+          if (isLayoutVisible()) onLayoutAppear(isFailed = true)
         } else if (intent.action === "com.navigation.bottom_tab_selected") {
           if (isLayoutVisible()) onLayoutAppear(bottomTabSelected = true)
         }
@@ -61,9 +64,11 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     return true
   }
 
-  private fun onLayoutAppear(isRefresh: Boolean = false, bottomTabSelected: Boolean = false) {
+  private fun onLayoutAppear(isRefresh: Boolean = false, isFailed: Boolean = false, bottomTabSelected: Boolean = false) {
     if (isRefresh) {
       attachBanner(isRefresh = true)
+    } else if (isFailed) {
+      attachBanner(isFailed = true)
     } else if (bottomTabSelected) {
       attachBanner()
     } else {
@@ -85,13 +90,13 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     if (isLayoutVisible()) onLayoutAppear()
   }
 
-  private fun attachBanner (isRefresh: Boolean = false) {
-    if(lastBannerParent == this && !isRefresh)
+  private fun attachBanner (isRefresh: Boolean = false, isFailed: Boolean = false) {
+    if(lastBannerParent == this && !isRefresh && !isFailed)
       return
 
     runOnUiThread {
       try {
-        if (!IronsourceBannerModule.isAdLoaded && !IronsourceBannerModule.bannerExists) {
+        if (isFailed) {
           val activityBannerLayoutParams = LayoutParams(width, height).apply {
             gravity = Gravity.CENTER
             bottomMargin = abs(1000)
