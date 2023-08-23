@@ -120,7 +120,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     }
     sendEvent(reactApplicationContext, "BANNER_FAILED_TO_LOAD", args)
 
-    IronSource.destroyBanner(bannerView)
+    if (bannerView != null) IronSource.destroyBanner(bannerView)
     isAdLoaded = false
     initBanner()
   }
