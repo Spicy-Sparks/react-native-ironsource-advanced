@@ -88,18 +88,20 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
         FrameLayout.LayoutParams.WRAP_CONTENT
       )
 
-      val bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
-      IronsourceBannerModule.bannerView = bannerView
-      registerAdListener()
+      if(bannerView == null) {
 
-      IronSource.loadBanner(IronsourceBannerModule.bannerView)
+        bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
+        registerAdListener()
 
-      currentActivity?.addContentView(
-        IronsourceBannerModule.bannerView,
-        layoutParams
-      )
+        IronSource.loadBanner(bannerView)
 
-      IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
+        currentActivity?.addContentView(
+          bannerView,
+          layoutParams
+        )
+
+        bannerView?.visibility = View.INVISIBLE
+      }
     }
   }
 
