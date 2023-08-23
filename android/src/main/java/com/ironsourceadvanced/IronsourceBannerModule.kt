@@ -30,16 +30,12 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     val application = reactApplicationContext?.applicationContext as? Application
     application?.registerActivityLifecycleCallbacks(appLifecycleListener)
     module = this
-
-
-
   }
 
   companion object {
     const val NAME = "IronsourceBanner"
     var bannerView: IronSourceBannerLayout? = null
     var isAdLoaded = false
-    var bannerExists = false
     private var module: IronsourceBannerModule? = null
 
     fun registerAdListener() {
@@ -76,6 +72,16 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   @ReactMethod
   fun addEventsDelegate() {
+    initBanner()
+  }
+
+  @ReactMethod
+  fun addListener(eventName: String?) {}
+
+  @ReactMethod
+  fun removeListeners(count: Int?) {}
+
+  private fun initBanner() {
     runOnUiThread {
       var layoutParams: FrameLayout.LayoutParams? = FrameLayout.LayoutParams(
         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -83,7 +89,6 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
       )
 
       val bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
-      bannerExists = true
       IronsourceBannerModule.bannerView = bannerView
       registerAdListener()
 
@@ -97,12 +102,6 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
       IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
     }
   }
-
-  @ReactMethod
-  fun addListener(eventName: String?) {}
-
-  @ReactMethod
-  fun removeListeners(count: Int?) {}
 
   override fun onAdLoaded(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LOADED", null)
@@ -121,9 +120,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
     IronSource.destroyBanner(bannerView)
     isAdLoaded = false
-    bannerExists = false
-    val intent = Intent("com.ironsourceadvanced.banner_failed")
-    currentActivity?.applicationContext?.sendBroadcast(intent)
+    initBanner()
   }
 
   override fun onAdClicked(adInfo: AdInfo?) {
@@ -157,7 +154,6 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     override fun onActivityDestroyed(activity: Activity) {
       if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
         isAdLoaded = false
-        bannerExists = false
         if (bannerView != null) IronSource.destroyBanner(bannerView)
       }
     }

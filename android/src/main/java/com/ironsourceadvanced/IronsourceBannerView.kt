@@ -9,8 +9,6 @@ import android.view.*
 import android.widget.RelativeLayout
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.facebook.react.uimanager.ThemedReactContext
-import com.ironsource.mediationsdk.ISBannerSize
-import com.ironsource.mediationsdk.IronSource
 import java.util.*
 import kotlin.math.abs
 
@@ -32,14 +30,11 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     val intentFilter = IntentFilter()
     intentFilter.addAction("com.ironsourceadvanced.banner_loaded")
     intentFilter.addAction("com.navigation.bottom_tab_selected")
-    intentFilter.addAction("com.ironsourceadvanced.banner_failed")
 
     val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent) {
         if (intent.action === "com.ironsourceadvanced.banner_loaded") {
           if (isLayoutVisible()) onLayoutAppear(isRefresh = true)
-        } else if (intent.action === "com.ironsourceadvanced.banner_failed") {
-          if (isLayoutVisible()) onLayoutAppear(isFailed = true)
         } else if (intent.action === "com.navigation.bottom_tab_selected") {
           if (isLayoutVisible()) onLayoutAppear(bottomTabSelected = true)
         }
@@ -64,13 +59,11 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     return true
   }
 
-  private fun onLayoutAppear(isRefresh: Boolean = false, isFailed: Boolean = false, bottomTabSelected: Boolean = false) {
+  private fun onLayoutAppear(isRefresh: Boolean = false, bottomTabSelected: Boolean = false) {
     if (isRefresh) {
       attachBanner(isRefresh = true)
-    } else if (isFailed) {
-      attachBanner(isFailed = true)
     } else if (bottomTabSelected) {
-      attachBanner()
+      attachBanner(bottomTabSelected = true)
     } else {
       val timer = Timer()
       timer.schedule(object : TimerTask() {
@@ -90,35 +83,12 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
     if (isLayoutVisible()) onLayoutAppear()
   }
 
-  private fun attachBanner (isRefresh: Boolean = false, isFailed: Boolean = false) {
-    if(lastBannerParent == this && !isRefresh && !isFailed)
+  private fun attachBanner (isRefresh: Boolean = false, bottomTabSelected: Boolean = false) {
+    if(lastBannerParent == this && !isRefresh && !bottomTabSelected)
       return
 
     runOnUiThread {
       try {
-        if (isFailed) {
-          val activityBannerLayoutParams = LayoutParams(width, height).apply {
-            gravity = Gravity.CENTER
-            bottomMargin = abs(1000)
-          }
-
-          layoutParams = bannerLayoutParams
-
-          val bannerView = IronSource.createBanner(mContext?.currentActivity, ISBannerSize.BANNER)
-          IronsourceBannerModule.bannerExists = true
-          IronsourceBannerModule.bannerView = bannerView
-          IronsourceBannerModule.registerAdListener()
-
-          IronSource.loadBanner(IronsourceBannerModule.bannerView)
-
-          mContext?.currentActivity?.addContentView(
-            IronsourceBannerModule.bannerView,
-            activityBannerLayoutParams
-          )
-
-          IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
-        }
-
         if(IronsourceBannerModule.isAdLoaded) {
           if(IronsourceBannerModule.bannerView?.parent != null) {
             val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
