@@ -37,17 +37,11 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     var bannerView: IronSourceBannerLayout? = null
     var isAdLoaded = false
     private var module: IronsourceBannerModule? = null
-
-    fun registerAdListener() {
-      bannerView?.levelPlayBannerListener = module
-    }
   }
 
   override fun onHostResume() {
     val application = reactApplicationContext?.applicationContext as? Application
     application?.registerActivityLifecycleCallbacks(appLifecycleListener)
-
-
   }
 
   override fun onHostPause() {
@@ -81,6 +75,10 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
   @ReactMethod
   fun removeListeners(count: Int?) {}
 
+  private fun registerAdListener() {
+    bannerView?.levelPlayBannerListener = module
+  }
+
   private fun initBanner() {
     runOnUiThread {
       var layoutParams: FrameLayout.LayoutParams? = FrameLayout.LayoutParams(
@@ -89,7 +87,6 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
       )
 
       if(bannerView == null) {
-
         bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
         registerAdListener()
 
@@ -120,7 +117,10 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     }
     sendEvent(reactApplicationContext, "BANNER_FAILED_TO_LOAD", args)
 
-    IronSource.destroyBanner(bannerView)
+    if (bannerView != null) {
+      IronSource.destroyBanner(bannerView)
+      bannerView = null
+    }
     isAdLoaded = false
     initBanner()
   }
@@ -156,7 +156,10 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     override fun onActivityDestroyed(activity: Activity) {
       if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
         isAdLoaded = false
-        if (bannerView != null) IronSource.destroyBanner(bannerView)
+        if (bannerView != null) {
+          IronSource.destroyBanner(bannerView)
+          bannerView = null
+        }
       }
     }
 

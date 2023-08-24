@@ -89,42 +89,45 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
 
     runOnUiThread {
       try {
-        if(IronsourceBannerModule.isAdLoaded) {
-          if(IronsourceBannerModule.bannerView?.parent != null) {
-            val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
-            bannerParentView?.removeView(IronsourceBannerModule.bannerView)
-          }
-
-          val activityBannerLayoutParams = LayoutParams(width, height).apply {
-            gravity = Gravity.CENTER
-            bottomMargin = abs(1000)
-          }
-
-          layoutParams = bannerLayoutParams
-
-          mContext?.currentActivity?.addContentView(
-            IronsourceBannerModule.bannerView,
-            activityBannerLayoutParams
-          )
-
-          IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
-
-          val timer = Timer()
-          timer.schedule(object : TimerTask() {
-            override fun run() {
-              post {
-                try {
-                  if(IronsourceBannerModule.bannerView?.parent != null) {
-                    val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
-                    bannerParentView?.removeView(IronsourceBannerModule.bannerView)
-                  }
-                  IronsourceBannerModule.bannerView?.visibility = View.VISIBLE
-                  addView(IronsourceBannerModule.bannerView, bannerLayoutParams)
-                  lastBannerParent = this@IronsourceBannerView
-                } catch (_: Throwable) {}
-              }
+        if (IronsourceBannerModule.bannerView != null) {
+          if (IronsourceBannerModule.isAdLoaded) {
+            if (IronsourceBannerModule.bannerView?.parent != null) {
+              val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
+              bannerParentView?.removeView(IronsourceBannerModule.bannerView)
             }
-          }, 1L)
+
+            val activityBannerLayoutParams = LayoutParams(width, height).apply {
+              gravity = Gravity.CENTER
+              bottomMargin = abs(1000)
+            }
+
+            layoutParams = bannerLayoutParams
+
+            mContext?.currentActivity?.addContentView(
+              IronsourceBannerModule.bannerView,
+              activityBannerLayoutParams
+            )
+
+            IronsourceBannerModule.bannerView?.visibility = View.INVISIBLE
+
+            val timer = Timer()
+            timer.schedule(object : TimerTask() {
+              override fun run() {
+                post {
+                  try {
+                    if (IronsourceBannerModule.bannerView?.parent != null) {
+                      val bannerParentView = IronsourceBannerModule.bannerView?.parent as? ViewGroup
+                      bannerParentView?.removeView(IronsourceBannerModule.bannerView)
+                    }
+                    IronsourceBannerModule.bannerView?.visibility = View.VISIBLE
+                    addView(IronsourceBannerModule.bannerView, bannerLayoutParams)
+                    lastBannerParent = this@IronsourceBannerView
+                  } catch (_: Throwable) {
+                  }
+                }
+              }
+            }, 1L)
+          }
         }
       } catch (_: Throwable) {}
     }
