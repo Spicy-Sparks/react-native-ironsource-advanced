@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.FrameLayout
 import com.facebook.react.bridge.*
@@ -24,6 +26,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
   LifecycleEventListener{
 
   private var appLifecycleListener: AppLifecycleListener? = null
+  private var createBannerTimestamp: Long = 0
 
   init {
     appLifecycleListener = AppLifecycleListener()
@@ -36,6 +39,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     const val NAME = "IronsourceBanner"
     var bannerView: IronSourceBannerLayout? = null
     var isAdLoaded = false
+    var bannerInitScheduled = false
     private var module: IronsourceBannerModule? = null
   }
 
@@ -90,6 +94,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
         bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
         registerAdListener()
 
+        createBannerTimestamp = System.currentTimeMillis()
+
         IronSource.loadBanner(bannerView)
 
         currentActivity?.addContentView(
@@ -99,6 +105,24 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
         bannerView?.visibility = View.INVISIBLE
       }
+    }
+  }
+
+  private fun scheduleBannerInitIfNeeded() {
+    val currentTime = System.currentTimeMillis()
+    val timeElapsed = currentTime - createBannerTimestamp
+    val timeRemaining = 10000 - timeElapsed
+
+    if (timeElapsed >= 10000) {
+      initBanner()
+    } else if (!bannerInitScheduled) {
+      bannerInitScheduled = true
+
+      val handler = Handler(Looper.getMainLooper())
+      handler.postDelayed({
+        initBanner()
+        bannerInitScheduled = false
+      }, timeRemaining)
     }
   }
 
@@ -122,7 +146,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
       bannerView = null
     }
     isAdLoaded = false
-    initBanner()
+
+    scheduleBannerInitIfNeeded()
   }
 
   override fun onAdClicked(adInfo: AdInfo?) {
@@ -155,11 +180,12 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
     override fun onActivityDestroyed(activity: Activity) {
       if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
-        isAdLoaded = false
         if (bannerView != null) {
           IronSource.destroyBanner(bannerView)
           bannerView = null
         }
+        isAdLoaded = false
+        bannerInitScheduled = false
       }
     }
 
