@@ -40,6 +40,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
     var bannerView: IronSourceBannerLayout? = null
     var isAdLoaded = false
     var bannerInitScheduled = false
+    var isAppInForeground: Boolean = true
+    var refreshBannerOnResume: Boolean = false
     private var module: IronsourceBannerModule? = null
   }
 
@@ -129,8 +131,12 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
   override fun onAdLoaded(adInfo: AdInfo?) {
     sendEvent(reactApplicationContext, "BANNER_LOADED", null)
     isAdLoaded = true
-    val intent = Intent("com.ironsourceadvanced.banner_loaded")
-    currentActivity?.applicationContext?.sendBroadcast(intent)
+    if (isAppInForeground) {
+      val intent = Intent("com.ironsourceadvanced.banner_loaded")
+      currentActivity?.applicationContext?.sendBroadcast(intent)
+    } else {
+      refreshBannerOnResume = true
+    }
   }
 
   override fun onAdLoadFailed(error: IronSourceError?) {
@@ -172,9 +178,21 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
     override fun onActivityStarted(activity: Activity) {}
 
-    override fun onActivityResumed(activity: Activity) {}
+    override fun onActivityResumed(activity: Activity) {
+      if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
+        isAppInForeground = true
+        if (refreshBannerOnResume) {
+          val intent = Intent("com.ironsourceadvanced.banner_loaded")
+          activity?.applicationContext?.sendBroadcast(intent)
+        }
+      }
+    }
 
-    override fun onActivityPaused(activity: Activity) {}
+    override fun onActivityPaused(activity: Activity) {
+      if(activity.componentName.toString().takeLast(18).contains(".MainActivity")) {
+        isAppInForeground = false
+      }
+    }
 
     override fun onActivityStopped(activity: Activity) {}
 
@@ -186,6 +204,8 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
         }
         isAdLoaded = false
         bannerInitScheduled = false
+        isAppInForeground = true
+        refreshBannerOnResume = false
       }
     }
 
