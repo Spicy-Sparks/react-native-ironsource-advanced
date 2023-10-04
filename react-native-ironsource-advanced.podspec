@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   s.dependency "IronSourceSDK"
-  s.dependency 'IronSourceAdQualitySDK', "~> 7.14.0"
+  s.dependency 'IronSourceAdQualitySDK'
 
   # Don't install the dependencies when we run `pod install` in the old architecture.
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
