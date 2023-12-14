@@ -79,7 +79,7 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.ironsource.sdk:mediationsdk:7.6.0'
+  implementation 'com.ironsource.sdk:mediationsdk:+'
   implementation 'com.ironsource:adqualitysdk:+'
 }
 
