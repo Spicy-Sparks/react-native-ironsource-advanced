@@ -3,8 +3,10 @@ package com.ironsourceadvanced
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.RECEIVER_EXPORTED
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.view.*
 import android.widget.RelativeLayout
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
@@ -40,7 +42,11 @@ class IronsourceBannerView(context: ThemedReactContext) : RelativeLayout(context
         }
       }
     }
-    mContext?.registerReceiver(receiver, intentFilter)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      mContext?.registerReceiver(receiver, intentFilter, RECEIVER_EXPORTED)
+    } else {
+      mContext?.registerReceiver(receiver, intentFilter)
+    }
   }
 
   fun isLayoutVisible(): Boolean {
