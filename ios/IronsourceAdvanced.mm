@@ -5,7 +5,6 @@
 #pragma mark - constants
 NSString *const REWARDED_VIDEO = @"REWARDED_VIDEO";
 NSString *const INTERSTITIAL = @"INTERSTITIAL";
-NSString *const OFFERWALL = @"OFFERWALL";
 NSString *const BANNER = @"BANNER";
 
 NSString *const kIronSourceInitializationCompleted = @"INIT_COMPLETED";
@@ -61,8 +60,6 @@ RCT_EXPORT_METHOD(init:(nonnull NSString *)appKey
                 [parsedAdUnits addObject:IS_REWARDED_VIDEO];
             } else if ([unit isEqualToString:INTERSTITIAL]){
                 [parsedAdUnits addObject:IS_INTERSTITIAL];
-            } else if ([unit isEqualToString:OFFERWALL]){
-                [parsedAdUnits addObject:IS_OFFERWALL];
             } else if ([unit isEqualToString:BANNER]){
                 [parsedAdUnits addObject:IS_BANNER];
             } else {

@@ -14,7 +14,7 @@ const init = (appKey: string, options: InitOptions = {}): Promise<void> => {
   return IronsourceAdvanced.init(appKey, [], options)
 }
 
-export type AdUnit = 'REWARDED_VIDEO' | 'INTERSTITIAL' | 'OFFERWALL' | 'BANNER'
+export type AdUnit = 'REWARDED_VIDEO' | 'INTERSTITIAL' | 'BANNER'
 
 const initWithAdUnits = (
   appKey: string,

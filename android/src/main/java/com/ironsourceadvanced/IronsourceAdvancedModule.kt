@@ -45,7 +45,6 @@ class IronsourceAdvancedModule(reactContext: ReactApplicationContext?) :
         when (it) {
           "REWARDED_VIDEO" -> IronSource.AD_UNIT.REWARDED_VIDEO
           "INTERSTITIAL" -> IronSource.AD_UNIT.INTERSTITIAL
-          "OFFERWALL" -> IronSource.AD_UNIT.OFFERWALL
           "BANNER" -> IronSource.AD_UNIT.BANNER
           else -> return promise.reject(
             "E_ILLEGAL_ARGUMENT",

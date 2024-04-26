@@ -12,7 +12,6 @@ class IronsourceAdvancedPackage : ReactPackage {
       IronsourceAdQualityModule(reactContext),
       IronsourceInterstitialModule(reactContext),
       IronsourceRewardedModule(reactContext),
-      IronsourceOfferwallModule(reactContext),
       IronsourceBannerModule(reactContext)
     )
   }
