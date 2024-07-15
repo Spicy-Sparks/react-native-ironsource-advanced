@@ -87,25 +87,27 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
 
   private fun initBanner() {
     runOnUiThread {
-      var layoutParams: FrameLayout.LayoutParams? = FrameLayout.LayoutParams(
+      val layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
         FrameLayout.LayoutParams.MATCH_PARENT,
         FrameLayout.LayoutParams.WRAP_CONTENT
       )
 
       if(bannerView == null) {
         bannerView = IronSource.createBanner(currentActivity, ISBannerSize.BANNER)
-        registerAdListener()
+        if (bannerView != null) {
+          registerAdListener()
 
-        createBannerTimestamp = System.currentTimeMillis()
+          createBannerTimestamp = System.currentTimeMillis()
 
-        IronSource.loadBanner(bannerView)
+          IronSource.loadBanner(bannerView)
 
-        currentActivity?.addContentView(
-          bannerView,
-          layoutParams
-        )
+          currentActivity?.addContentView(
+            bannerView,
+            layoutParams
+          )
 
-        bannerView?.visibility = View.INVISIBLE
+          bannerView?.visibility = View.INVISIBLE
+        }
       }
     }
   }
@@ -183,7 +185,7 @@ class IronsourceBannerModule(reactContext: ReactApplicationContext?) :
         isAppInForeground = true
         if (refreshBannerOnResume) {
           val intent = Intent("com.ironsourceadvanced.banner_loaded")
-          activity?.applicationContext?.sendBroadcast(intent)
+          activity.applicationContext?.sendBroadcast(intent)
         }
       }
     }

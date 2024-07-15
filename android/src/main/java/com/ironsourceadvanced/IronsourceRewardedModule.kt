@@ -22,10 +22,8 @@ class IronsourceRewardedModule(reactContext: ReactApplicationContext?) :
     return NAME
   }
 
-  private fun sendEvent(reactContext: ReactContext, eventName: String, params: WritableMap?) {
-    reactContext
-      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-      .emit(eventName, params)
+  private fun sendEvent(reactContext: ReactContext?, eventName: String, params: WritableMap?) {
+    reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)?.emit(eventName, params)
   }
 
   @ReactMethod
@@ -35,12 +33,16 @@ class IronsourceRewardedModule(reactContext: ReactApplicationContext?) :
   }
 
   @ReactMethod
-  fun showRewardedVideo(placementName: String) {
-    currentActivity?.apply {
-      if(IronSource.isRewardedVideoAvailable()) {
-        IronSource.showRewardedVideo(placementName);
-      }
-      else {
+  fun showRewardedVideo(placementName: String?) {
+    if (placementName.isNullOrBlank()) {
+      sendEvent(reactApplicationContext, "REWARDED_UNAVAILABLE", null)
+      return
+    }
+
+    currentActivity?.let {
+      if (IronSource.isRewardedVideoAvailable()) {
+        IronSource.showRewardedVideo(placementName)
+      } else {
         sendEvent(reactApplicationContext, "REWARDED_UNAVAILABLE", null)
       }
     }
@@ -48,7 +50,7 @@ class IronsourceRewardedModule(reactContext: ReactApplicationContext?) :
 
   @ReactMethod
   fun isRewardedVideoAvailable(promise: Promise) {
-    return promise.resolve(IronSource.isRewardedVideoAvailable())
+    promise.resolve(IronSource.isRewardedVideoAvailable())
   }
 
   @ReactMethod
@@ -63,9 +65,9 @@ class IronsourceRewardedModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdShowFailed(error: IronSourceError?, adInfo: AdInfo?) {
     val args = Arguments.createMap()
-    if(error != null) {
-      args.putInt("errorCode", error.errorCode)
-      args.putString("message", error.errorMessage)
+    error?.let {
+      args.putInt("errorCode", it.errorCode)
+      args.putString("message", it.errorMessage)
     }
     sendEvent(reactApplicationContext, "REWARDED_FAILED_TO_SHOW", args)
   }
@@ -76,10 +78,10 @@ class IronsourceRewardedModule(reactContext: ReactApplicationContext?) :
 
   override fun onAdRewarded(placementInfo: Placement?, adInfo: AdInfo?) {
     val args = Arguments.createMap()
-    if(placementInfo != null) {
-      args.putString("placementName", placementInfo.placementName)
-      args.putString("rewardName", placementInfo.rewardName)
-      args.putInt("rewardAmount", placementInfo.rewardAmount)
+    placementInfo?.let {
+      args.putString("placementName", it.placementName)
+      args.putString("rewardName", it.rewardName)
+      args.putInt("rewardAmount", it.rewardAmount)
     }
     sendEvent(reactApplicationContext, "REWARDED_GOT_REWARD", args)
   }
