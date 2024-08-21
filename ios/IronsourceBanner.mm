@@ -26,17 +26,15 @@ RCT_EXPORT_MODULE()
     ];
 }
 
-RCT_EXPORT_METHOD(addEventsDelegate)
+RCT_EXPORT_METHOD(addEventsDelegate:(nonnull NSString*)adUnit
+                  placementName:(nonnull NSString*)placementName)
 {
-    // Create the ad size
     LPMAdSize *bannerSize = [LPMAdSize bannerSize];
     
-    // Create the banner ad view object with required & optional params
-    _bannerView = [[LPMBannerAdView alloc] initWithAdUnitId:@"adUnitId"];
-    [_bannerView setPlacementName:@"PlacementName"];
+    _bannerView = [[LPMBannerAdView alloc] initWithAdUnitId:adUnit];
+    [_bannerView setPlacementName:placementName];
     [_bannerView setAdSize:bannerSize];
     
-    // See delegate implementation
     [_bannerView setDelegate:self];
 }
 

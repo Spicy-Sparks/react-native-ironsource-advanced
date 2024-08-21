@@ -11,7 +11,10 @@ const ON_BANNER_LEFT = 'BANNER_LEFT'
 const BANNER_EXPANDED = 'BANNER_EXPANDED'
 const BANNER_COLLAPSED = 'BANNER_COLLAPSED'
 
-const init = () => IronsourceBanner.addEventsDelegate()
+const init = (
+  adUnit: string,
+  placementName: string
+) => IronsourceBanner.addEventsDelegate(adUnit, placementName)
 
 const onLoaded = {
   setListener: (listener: () => void) => {
