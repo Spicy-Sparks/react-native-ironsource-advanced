@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm}"
 
   s.dependency "React-Core"
-  s.dependency "IronSourceSDK"
-  s.dependency 'IronSourceAdQualitySDK'
+  s.dependency "IronSourceSDK", '8.2.0.0'
+  s.dependency 'IronSourceAdQualitySDK', '7.20.3'
 
   # Don't install the dependencies when we run `pod install` in the old architecture.
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then

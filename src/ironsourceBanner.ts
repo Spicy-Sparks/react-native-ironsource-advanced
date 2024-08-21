@@ -8,7 +8,8 @@ const ON_BANNER_FAILED_TO_LOAD = 'BANNER_FAILED_TO_LOAD'
 const ON_BANNER_CLICKED = 'BANNER_CLICKED'
 const ON_BANNER_PRESENTED = 'BANNER_PRESENTED'
 const ON_BANNER_LEFT = 'BANNER_LEFT'
-const ON_BANNER_DISMISSED = 'BANNER_DISMISSED'
+const BANNER_EXPANDED = 'BANNER_EXPANDED'
+const BANNER_COLLAPSED = 'BANNER_COLLAPSED'
 
 const init = () => IronsourceBanner.addEventsDelegate()
 
@@ -53,12 +54,20 @@ const onLeft = {
   removeListener: () => eventEmitter.removeAllListeners(ON_BANNER_LEFT),
 }
 
-const onDismissed = {
+const onExpanded = {
   setListener: (listener: () => void) => {
-    eventEmitter.removeAllListeners(ON_BANNER_DISMISSED)
-    eventEmitter.addListener(ON_BANNER_DISMISSED, listener)
+    eventEmitter.removeAllListeners(BANNER_EXPANDED)
+    eventEmitter.addListener(BANNER_EXPANDED, listener)
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_BANNER_DISMISSED),
+  removeListener: () => eventEmitter.removeAllListeners(BANNER_EXPANDED),
+}
+
+const onCollapsed = {
+  setListener: (listener: () => void) => {
+    eventEmitter.removeAllListeners(BANNER_COLLAPSED)
+    eventEmitter.addListener(BANNER_COLLAPSED, listener)
+  },
+  removeListener: () => eventEmitter.removeAllListeners(BANNER_COLLAPSED),
 }
 
 const removeAllListeners = () => {
@@ -67,7 +76,8 @@ const removeAllListeners = () => {
   onClicked.removeListener()
   onPresented.removeListener()
   onLeft.removeListener()
-  onDismissed.removeListener()
+  onExpanded.removeListener()
+  onCollapsed.removeListener()
 }
 
 export default {
@@ -77,6 +87,7 @@ export default {
   onClicked,
   onPresented,
   onLeft,
-  onDismissed,
+  onExpanded,
+  onCollapsed,
   removeAllListeners,
 }

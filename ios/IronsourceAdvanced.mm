@@ -53,8 +53,8 @@ RCT_EXPORT_METHOD(init:(nonnull NSString *)appKey
     
     [IronSource addImpressionDataDelegate:self];
     
-    if(adUnits.count){
-        NSMutableArray<NSString*> *parsedAdUnits = [[NSMutableArray alloc]init];
+    NSMutableArray<NSString*> *parsedAdUnits = [[NSMutableArray alloc]init];
+    if(adUnits.count) {
         for(NSString *unit in adUnits){
             if([unit isEqualToString:REWARDED_VIDEO]){
                 [parsedAdUnits addObject:IS_REWARDED_VIDEO];
@@ -66,11 +66,21 @@ RCT_EXPORT_METHOD(init:(nonnull NSString *)appKey
                 return reject(@"E_ILLEGAL_ARGUMENT", [NSString stringWithFormat: @"Unsupported ad unit: %@", unit], nil);
             }
         }
+    }
     
+    if(parsedAdUnits.count > 0) {
         [IronSource initWithAppKey:appKey adUnits:parsedAdUnits delegate:self];
     } else {
         [IronSource initWithAppKey:appKey delegate:self];
     }
+    
+    LPMInitRequestBuilder *requestBuilder = [[LPMInitRequestBuilder alloc] initWithAppKey:appKey];
+    [requestBuilder withLegacyAdFormats:parsedAdUnits];
+    if(options[@"userId"] != nil)
+        [requestBuilder withUserId:options[@"userId"]];
+    LPMInitRequest *initRequest = [requestBuilder build];
+    [LevelPlay initWithRequest:initRequest completion:^(LPMConfiguration *_Nullable config, NSError *_Nullable error) {
+    }];
     
     NSNumber *validateIntegration = options[@"validateIntegration"];
     

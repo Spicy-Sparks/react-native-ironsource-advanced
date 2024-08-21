@@ -122,7 +122,7 @@
     if(!self.active)
         return;
     
-    ISBannerView *bannerView = [IronsourceBanner bannerView];
+    LPMBannerAdView *bannerView = [IronsourceBanner bannerView];
     
     if (bannerView != nil) {
         CGPoint centerPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
@@ -132,11 +132,12 @@
 
 - (void)attachBanner {
     @try {
-        ISBannerView *bannerView = [IronsourceBanner bannerView];
+        LPMBannerAdView *bannerView = [IronsourceBanner bannerView];
         
         if(bannerView == nil)
             return;
         
+        [bannerView loadAdWithViewController:self.viewController];
         [super addSubview:bannerView];
         
         bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
