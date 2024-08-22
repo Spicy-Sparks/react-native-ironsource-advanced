@@ -32,7 +32,7 @@ RCT_EXPORT_METHOD(addEventsDelegate:(nonnull NSString*)adUnit
     LPMAdSize *bannerSize = [LPMAdSize bannerSize];
     
     _bannerView = [[LPMBannerAdView alloc] initWithAdUnitId:adUnit];
-    [_bannerView setPlacementName:placementName];
+    // [_bannerView setPlacementName:placementName];
     [_bannerView setAdSize:bannerSize];
     
     [_bannerView setDelegate:self];

@@ -80,6 +80,11 @@ RCT_EXPORT_METHOD(init:(nonnull NSString *)appKey
         [requestBuilder withUserId:options[@"userId"]];
     LPMInitRequest *initRequest = [requestBuilder build];
     [LevelPlay initWithRequest:initRequest completion:^(LPMConfiguration *_Nullable config, NSError *_Nullable error) {
+        if(error) {
+            reject(@"init error", error.userInfo[NSLocalizedDescriptionKey], nil);
+        } else {
+            resolve(nil);
+        }
     }];
     
     NSNumber *validateIntegration = options[@"validateIntegration"];
@@ -87,8 +92,6 @@ RCT_EXPORT_METHOD(init:(nonnull NSString *)appKey
     if ([validateIntegration isKindOfClass:[NSNumber class]] && [validateIntegration boolValue]) {
         [ISIntegrationHelper validateIntegration];
     }
-    
-    return resolve(nil);
 }
 
 RCT_EXPORT_METHOD(addImpressionDataDelegate)
