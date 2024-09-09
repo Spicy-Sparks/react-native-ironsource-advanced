@@ -7,6 +7,11 @@ import com.ironsource.mediationsdk.IronSource
 import com.ironsource.mediationsdk.impressionData.ImpressionData
 import com.ironsource.mediationsdk.impressionData.ImpressionDataListener
 import com.ironsource.mediationsdk.sdk.InitializationListener
+import com.unity3d.mediation.LevelPlay
+import com.unity3d.mediation.LevelPlayConfiguration
+import com.unity3d.mediation.LevelPlayInitError
+import com.unity3d.mediation.LevelPlayInitListener
+import com.unity3d.mediation.LevelPlayInitRequest
 import java.util.concurrent.Executors
 
 @ReactModule(name = IronsourceAdvancedModule.NAME)
@@ -56,7 +61,22 @@ class IronsourceAdvancedModule(reactContext: ReactApplicationContext?) :
     } else {
       IronSource.init(currentActivity, appKey, this@IronsourceAdvancedModule)
     }
-    promise.resolve(null)
+
+    val adFormats = listOf(LevelPlay.AdFormat.BANNER)
+    val initRequestTmp = LevelPlayInitRequest.Builder(appKey)
+      .withLegacyAdFormats(adFormats)
+    if (options != null) {
+      options.getString("userId")?.let { initRequestTmp.withUserId(it) }
+    }
+    val initRequest = initRequestTmp.build()
+    LevelPlay.init(reactApplicationContext, initRequest, object: LevelPlayInitListener {
+      override fun onInitSuccess(configuration: LevelPlayConfiguration) {
+        promise.resolve(null)
+      }
+      override fun onInitFailed(error: LevelPlayInitError) {
+        promise.reject("E_INIT_ERROR", error.errorMessage)
+      }
+    })
   }
 
   @ReactMethod

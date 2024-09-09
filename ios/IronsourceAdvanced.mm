@@ -81,7 +81,7 @@ RCT_EXPORT_METHOD(init:(nonnull NSString *)appKey
     LPMInitRequest *initRequest = [requestBuilder build];
     [LevelPlay initWithRequest:initRequest completion:^(LPMConfiguration *_Nullable config, NSError *_Nullable error) {
         if(error) {
-            reject(@"init error", error.userInfo[NSLocalizedDescriptionKey], nil);
+            reject(@"E_INIT_ERROR", error.userInfo[NSLocalizedDescriptionKey], nil);
         } else {
             resolve(nil);
         }
