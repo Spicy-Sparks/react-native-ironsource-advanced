@@ -331,7 +331,7 @@ PODS:
   - React-jsinspector (0.71.8)
   - React-logger (0.71.8):
     - glog
-  - react-native-ironsource-advanced (0.3.8):
+  - react-native-ironsource-advanced (0.3.12):
     - IronSourceAdQualitySDK (= 7.20.3)
     - IronSourceSDK (= 8.2.0.0)
     - React-Core
@@ -581,7 +581,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
+  DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   FBLazyVector: f637f31eacba90d4fdeff3fa41608b8f361c173b
   FBReactNativeSpec: 0d9a4f4de7ab614c49e98c00aedfd3bfbda33d59
   Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
@@ -594,7 +594,7 @@ SPEC CHECKSUMS:
   Flipper-RSocket: d9d9ade67cbecf6ac10730304bf5607266dd2541
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
+  glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
   hermes-engine: 47986d26692ae75ee7a17ab049caee8864f855de
   IronSourceAdQualitySDK: 8d9b66cd84c47bd2782781fa6b4e0709e01c98ad
   IronSourceSDK: 8e630747c09d8b1eb66ce2e195a10edd9a75f8b9
@@ -614,7 +614,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 747911ab5921641b4ed7e4900065896597142125
   React-jsinspector: c712f9e3bb9ba4122d6b82b4f906448b8a281580
   React-logger: 342f358b8decfbf8f272367f4eacf4b6154061be
-  react-native-ironsource-advanced: 00f1c1a6f9cf03f5168df4e35305f467319a861b
+  react-native-ironsource-advanced: bc73317246f30eedfb5a963a3feb3fa639ae6e71
   React-perflogger: d21f182895de9d1b077f8a3cd00011095c8c9100
   React-RCTActionSheet: 0151f83ef92d2a7139bba7dfdbc8066632a6d47b
   React-RCTAnimation: 5ec9c0705bb2297549c120fe6473aa3e4a01e215

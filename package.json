@@ -1,6 +1,6 @@
 {
   "name": "react-native-ironsource-advanced",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -83,7 +83,6 @@
   "engines": {
     "node": ">= 16.0.0"
   },
-  "packageManager": "^yarn@1.22.15",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
