@@ -1,6 +1,7 @@
-#import <Foundation/Foundation.h>
 #import "IronsourceInterstitial.h"
 #import "RCTUtils.h"
+
+#pragma mark - Constants
 
 NSString *const kIronSourceInterstitialLoaded = @"INTERSTITIAL_LOADED";
 NSString *const kIronSourceInterstitialShown = @"INTERSTITIAL_SHOWN";
@@ -12,7 +13,11 @@ NSString *const kIronSourceInterstitialOpened = @"INTERSTITIAL_OPENED";
 
 @implementation IronsourceInterstitial
 
+#pragma mark - Module Registration
+
 RCT_EXPORT_MODULE()
+
+#pragma mark - Supported Events
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[
@@ -26,35 +31,33 @@ RCT_EXPORT_MODULE()
     ];
 }
 
-RCT_EXPORT_METHOD(loadInterstitial)
-{
+#pragma mark - Interstitial Methods
+
+- (void)loadInterstitial {
     [IronSource setLevelPlayInterstitialDelegate:self];
     [IronSource loadInterstitial];
 }
 
-RCT_EXPORT_METHOD(showInterstitial:(NSString*) placementName)
-{
+- (void)showInterstitial:(NSString *)placementName {
     if ([IronSource hasInterstitial]) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [IronSource showInterstitialWithViewController:RCTPresentedViewController() placement:placementName];
+            [IronSource showInterstitialWithViewController:RCTPresentedViewController()
+                                                 placement:placementName];
         });
-    }
-    else {
-        [self sendEventWithName:kIronSourceInterstitialFailedToLoad body:nil];
+    } else {
+        [self sendEventWithName:kIronSourceInterstitialFailedToLoad body:@{ @"message": @"Interstitial not available" }];
     }
 }
 
-RCT_EXPORT_METHOD(isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
-{
+- (void)isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
     @try {
         resolve(@([IronSource hasInterstitial]));
-    }
-    @catch (NSException *exception) {
-        reject(@"isInterstitialAvailable, Error, %@", exception.reason, nil);
+    } @catch (NSException *exception) {
+        reject(@"E_IS_INTERSTITIAL", exception.reason, nil);
     }
 }
 
-#pragma mark - Events
+#pragma mark - LevelPlayInterstitialDelegate
 
 - (void)didLoadWithAdInfo:(ISAdInfo *)adInfo {
     [self sendEventWithName:kIronSourceInterstitialLoaded body:nil];
@@ -65,13 +68,9 @@ RCT_EXPORT_METHOD(isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject
 }
 
 - (void)didFailToShowWithError:(NSError *)error andAdInfo:(ISAdInfo *)adInfo {
-    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
-    if(error != nil) {
-        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
-    }
-    if(error != nil && error.userInfo != nil) {
-        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
-    }
+    NSMutableDictionary *args = [NSMutableDictionary new];
+    args[@"errorCode"] = error ? @(error.code) : @(0);
+    args[@"message"] = error.userInfo[NSLocalizedDescriptionKey] ?: @"";
     [self sendEventWithName:kIronSourceInterstitialFailedToShow body:args];
 }
 
@@ -88,14 +87,16 @@ RCT_EXPORT_METHOD(isInterstitialAvailable:(RCTPromiseResolveBlock)resolve reject
 }
 
 - (void)didFailToLoadWithError:(NSError *)error {
-    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
-    if(error != nil) {
-        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
-    }
-    if(error != nil && error.userInfo != nil) {
-        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
-    }
+    NSMutableDictionary *args = [NSMutableDictionary new];
+    args[@"errorCode"] = error ? @(error.code) : @(0);
+    args[@"message"] = error.userInfo[NSLocalizedDescriptionKey] ?: @"";
     [self sendEventWithName:kIronSourceInterstitialFailedToLoad body:args];
+}
+
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeIronsourceAdvancedSpecJSI>(params);
 }
 
 @end

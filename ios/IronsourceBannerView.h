@@ -17,7 +17,7 @@
 
 @interface IronsourceBannerView : UIView <IronsourceBannerViewControllerDelegate>
 
-@property (nonatomic,strong) IronsourceBannerViewController* viewController;
-@property (nonatomic,assign) BOOL active;
+@property (nonatomic, strong) IronsourceBannerViewController *viewController;
+@property (nonatomic, assign, getter=isActive) BOOL active;
 
 @end

@@ -1,6 +1,7 @@
 #import "IronsourceRewarded.h"
-
 #import "RCTUtils.h"
+
+#pragma mark - Constants
 
 NSString *const kIronSourceRewardedVideoAvailable = @"REWARDED_AVAILABLE";
 NSString *const kIronSourceRewardedVideoUnavailable = @"REWARDED_UNAVAILABLE";
@@ -12,12 +13,11 @@ NSString *const kIronSourceRewardedVideoAdClicked = @"REWARDED_CLICKED";
 
 @implementation IronsourceRewarded
 
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
-}
+#pragma mark - Module Registration
 
 RCT_EXPORT_MODULE()
+
+#pragma mark - Supported Events
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[
@@ -26,40 +26,39 @@ RCT_EXPORT_MODULE()
         kIronSourceRewardedVideoAdRewarded,
         kIronSourceRewardedVideoFailedToShow,
         kIronSourceRewardedVideoDidOpened,
-        kIronSourceRewardedVideoAdClosed
+        kIronSourceRewardedVideoAdClosed,
+        kIronSourceRewardedVideoAdClicked
     ];
 }
 
-RCT_EXPORT_METHOD(loadRewardedVideo)
-{
+#pragma mark - Rewarded Video Methods
+
+- (void)loadRewardedVideo {
     [IronSource setLevelPlayRewardedVideoDelegate:self];
     [IronSource loadRewardedVideo];
 }
 
-RCT_EXPORT_METHOD(showRewardedVideo:(NSString*)placementName)
-{
+- (void)showRewardedVideo:(NSString *)placementName {
     if ([IronSource hasRewardedVideo]) {
         [self sendEventWithName:kIronSourceRewardedVideoAvailable body:nil];
-        
         dispatch_async(dispatch_get_main_queue(), ^{
-            [IronSource showRewardedVideoWithViewController:RCTPresentedViewController() placement:placementName];
+            [IronSource showRewardedVideoWithViewController:RCTPresentedViewController()
+                                                  placement:placementName];
         });
     } else {
         [self sendEventWithName:kIronSourceRewardedVideoUnavailable body:nil];
     }
 }
 
-RCT_EXPORT_METHOD(isRewardedVideoAvailable:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
-{
+- (void)isRewardedVideoAvailable:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
     @try {
         resolve(@([IronSource hasRewardedVideo]));
-    }
-    @catch (NSException *exception) {
-        reject(@"isRewardedVideoAvailable, Error, %@", exception.reason, nil);
+    } @catch (NSException *exception) {
+        reject(@"E_REWARDED_VIDEO_AVAILABLE", exception.reason, nil);
     }
 }
 
-#pragma mark Events
+#pragma mark - LevelPlayRewardedVideoDelegate Methods
 
 - (void)hasAvailableAdWithAdInfo:(ISAdInfo *)adInfo {
     [self sendEventWithName:kIronSourceRewardedVideoAvailable body:nil];
@@ -70,27 +69,17 @@ RCT_EXPORT_METHOD(isRewardedVideoAvailable:(RCTPromiseResolveBlock)resolve rejec
 }
 
 - (void)didReceiveRewardForPlacement:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
-    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
-    if(placementInfo.placementName != nil) {
-        args[@"placementName"] = placementInfo.placementName;
-    }
-    if(placementInfo.rewardName != nil) {
-        args[@"rewardName"] = placementInfo.rewardName;
-    }
-    if(placementInfo.rewardAmount != nil) {
-        args[@"rewardAmount"] = placementInfo.rewardAmount;
-    }
+    NSMutableDictionary *args = [NSMutableDictionary new];
+    args[@"placementName"] = placementInfo.placementName ?: @"";
+    args[@"rewardName"] = placementInfo.rewardName ?: @"";
+    args[@"rewardAmount"] = placementInfo.rewardAmount ?: @(0);
     [self sendEventWithName:kIronSourceRewardedVideoAdRewarded body:args];
 }
 
 - (void)didFailToShowWithError:(NSError *)error andAdInfo:(ISAdInfo *)adInfo {
-    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
-    if(error != nil){
-        args[@"errorCode"] = [NSNumber numberWithInteger: error.code];
-    }
-    if(error != nil && error.userInfo != nil){
-        args[@"message"] = error.userInfo[NSLocalizedDescriptionKey];
-    }
+    NSMutableDictionary *args = [NSMutableDictionary new];
+    args[@"errorCode"] = error ? @(error.code) : @(0);
+    args[@"message"] = error.userInfo[NSLocalizedDescriptionKey] ?: @"";
     [self sendEventWithName:kIronSourceRewardedVideoFailedToShow body:args];
 }
 
@@ -104,6 +93,12 @@ RCT_EXPORT_METHOD(isRewardedVideoAvailable:(RCTPromiseResolveBlock)resolve rejec
 
 - (void)didClick:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
     [self sendEventWithName:kIronSourceRewardedVideoAdClicked body:nil];
+}
+
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeIronsourceAdvancedSpecJSI>(params);
 }
 
 @end

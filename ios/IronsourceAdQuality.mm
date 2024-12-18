@@ -1,41 +1,46 @@
 #import "IronsourceAdQuality.h"
-#import <IronSourceAdQualitySDK/IronSourceAdQuality.h>
-
-NSString *const kIronSourceAdQualityInitializationCompleted = @"INIT_COMPLETED";
-NSString *const kIronSourceAdQualityInitializationFailed = @"INIT_FAILED";
 
 @implementation IronsourceAdQuality
 
 RCT_EXPORT_MODULE()
 
+- (void)init:(NSString *)appKey userId:(NSString *)userId {
+    ISAdQualityConfig *adQualityConfig = [ISAdQualityConfig config];
+    if (userId != nil && userId.length > 0) {
+        adQualityConfig.userId = userId;
+    }
+    [[IronSourceAdQuality getInstance] initializeWithAppKey:appKey
+                                                  andConfig:adQualityConfig];
+}
+
+- (void)setUserId:(NSString *)userId {
+    if (userId != nil && userId.length > 0) {
+        [[IronSourceAdQuality getInstance] changeUserId:userId];
+    }
+}
+
 - (NSArray<NSString *> *)supportedEvents {
     return @[
-        kIronSourceAdQualityInitializationCompleted,
-        kIronSourceAdQualityInitializationFailed
+        @"INIT_COMPLETED",
+        @"INIT_FAILED"
     ];
 }
 
-RCT_EXPORT_METHOD(init:(NSString*) appKey
-                  userId:(NSString*)userId) {
-    ISAdQualityConfig *adQualityConfig = [ISAdQualityConfig config];
-    if(userId != nil && userId.length > 0)
-        adQualityConfig.userId = userId;
-    [[IronSourceAdQuality getInstance] initializeWithAppKey:appKey andConfig:adQualityConfig];
-}
-
-RCT_EXPORT_METHOD(setUserId:(NSString *)userId) {
-    if(userId != nil && userId.length > 0)
-        [[IronSourceAdQuality getInstance] changeUserId:userId];
-}
-
 - (void)adQualitySdkInitSuccess {
-    [self sendEventWithName:kIronSourceAdQualityInitializationCompleted body:nil];
+    [self sendEventWithName:@"INIT_COMPLETED" body:nil];
 }
 
-- (void)adQualitySdkInitFailed:(ISAdQualityInitError) error withMessage:(NSString *)message {
-    NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
+- (void)adQualitySdkInitFailed:(ISAdQualityInitError)error withMessage:(NSString *)message {
+    NSMutableDictionary *args = [NSMutableDictionary new];
     args[@"message"] = message;
-    [self sendEventWithName:kIronSourceAdQualityInitializationFailed body:args];
+    args[@"errorCode"] = @(error);
+    [self sendEventWithName:@"INIT_FAILED" body:args];
+}
+
+// TurboModule Integration
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params {
+    return std::make_shared<facebook::react::NativeIronsourceAdvancedSpecJSI>(params);
 }
 
 @end

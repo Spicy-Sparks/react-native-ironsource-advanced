@@ -1,21 +1,21 @@
-import { NativeModules } from 'react-native'
+import { NativeModules } from 'react-native';
 
-const { IronsourceSegment } = NativeModules
+const { IronsourceSegment } = NativeModules;
 
 export default class IronSourceSegment {
   constructor() {
-    IronsourceSegment.create()
+    IronsourceSegment.create();
   }
 
   setSegmentName(name: string) {
-    IronsourceSegment.setSegmentName(name)
+    IronsourceSegment.setSegmentName(name);
   }
 
   setCustomValue(key: string, value: string) {
-    IronsourceSegment.setCustomValue(value, key)
+    IronsourceSegment.setCustomValue(value, key);
   }
 
   activate() {
-    IronsourceSegment.activate()
+    IronsourceSegment.activate();
   }
 }
