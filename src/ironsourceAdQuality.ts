@@ -1,32 +1,40 @@
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+
+export interface Spec extends TurboModule {
+  init(appKey: string, userId?: string): Promise<void>;
+  setUserId(userId: string): void;
+  addListener: (eventType: string) => void;
+  removeListener: (eventType: string) => void;
+  removeListeners: (count: number) => void;
+}
+
+const IronsourceAdQuality = TurboModuleRegistry.getEnforcing<Spec>('IronsourceAdQuality');
 
 const ON_INIT_COMPLETED = 'INIT_COMPLETED';
 const ON_INIT_FAILED = 'INIT_FAILED';
 
-const { IronsourceAdQuality } = NativeModules;
-const eventEmitter = new NativeEventEmitter(IronsourceAdQuality);
-
 const init = (appKey: string, userId?: string): Promise<void> => {
-  return IronsourceAdQuality.init(appKey, userId);
+  return IronsourceAdQuality?.init(appKey, userId);
 };
 
 const onInitCompleted = {
   setListener: (listener: () => void) => {
-    eventEmitter.removeAllListeners(ON_INIT_COMPLETED);
-    eventEmitter.addListener(ON_INIT_COMPLETED, listener);
+    IronsourceAdQuality.removeListener(ON_INIT_COMPLETED);
+    IronsourceAdQuality.addListener(ON_INIT_COMPLETED, listener);
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_INIT_COMPLETED),
+  removeListener: () => IronsourceAdQuality.removeListener(ON_INIT_COMPLETED),
 };
 
 const onInitFailed = {
   setListener: (listener: () => void) => {
-    eventEmitter.removeAllListeners(ON_INIT_FAILED);
-    eventEmitter.addListener(ON_INIT_FAILED, listener);
+    IronsourceAdQuality.removeListener(ON_INIT_FAILED);
+    IronsourceAdQuality.addListener(ON_INIT_FAILED, listener);
   },
-  removeListener: () => eventEmitter.removeAllListeners(ON_INIT_FAILED),
+  removeListener: () => IronsourceAdQuality.removeListener(ON_INIT_FAILED),
 };
 
-const setUserId = (userId: string) => IronsourceAdQuality.setUserId(userId);
+const setUserId = (userId: string) => IronsourceAdQuality?.setUserId(userId);
 
 const removeAllListeners = () => {
   onInitCompleted.removeListener();
