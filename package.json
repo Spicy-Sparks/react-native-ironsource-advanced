@@ -1,6 +1,6 @@
 {
   "name": "react-native-ironsource-advanced",
-  "version": "0.3.14",
+  "version": "0.3.16",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
