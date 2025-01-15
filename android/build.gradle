@@ -83,8 +83,8 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.ironsource.sdk:mediationsdk:${safeExtGet('ironSourceVersion', '+')}"
-  implementation 'com.ironsource:adqualitysdk:+'
+  implementation "com.unity3d.ads-mediation:mediation-sdk:${safeExtGet('ironSourceVersion', '+')}"
+  implementation "com.unity3d.ads-mediation:adquality-sdk:+"
 }
 
 if (isNewArchitectureEnabled()) {
